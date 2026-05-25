@@ -10,7 +10,7 @@ enum Status {
 
 @Entity()
 export class Appointment {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
     id!: string
 
     @ManyToOne(() => Doctor)
