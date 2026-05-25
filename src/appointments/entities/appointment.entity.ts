@@ -27,10 +27,11 @@ export class Appointment {
 
     @Column({
         type: 'enum',
-        enum: Status
+        enum: Status,
+        default: 'pending'
     })
     status!: Status;
 
-    @Column()
+    @Column({ nullable: true })
     notes!: string;
 }
