@@ -1,7 +1,7 @@
 import { Exclude } from "class-transformer";
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn, Unique } from "typeorm";
 
-enum Role {
+export enum Role {
     Admin = 'admin',
     Doctor = 'doctor',
     Patient = 'patient'
@@ -13,11 +13,11 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @Column()
-    firstname!: string;
+    @Column({name:'first_name'})
+    firstName!: string;
 
-    @Column()
-    lastname!: string;
+    @Column({name:'last_name'})
+    lastName!: string;
 
     @Column({ unique: true })
     email!: string;
@@ -32,12 +32,13 @@ export class User {
     @Column()
     gender!: string;
 
-    @Column({ nullable: true })
-    blood_group!: string;
+    @Column({ name:'blood_group', nullable: true })
+    bloodGroup!: string;
 
     @Column({
         type: 'enum',
-        enum: Role
+        enum: Role,
+        default:'patient'
     })
     role!: Role
 }
