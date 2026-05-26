@@ -31,7 +31,7 @@ class EnvironmentVariables {
     DB_NAME!: string;
 
     @IsString()
-    SECRET!: string;
+    JWT_SECRET!: string;
 }
 
 export function validate(config: Record<string, unknown>) {
