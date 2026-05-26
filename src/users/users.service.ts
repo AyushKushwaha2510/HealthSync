@@ -1,0 +1,84 @@
+import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Role, User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import * as bcrypt from "bcryptjs";
+
+@Injectable()
+export class UsersService {
+
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>
+  ) { }
+
+  async registerUser(createUserDto: CreateUserDto) {
+    try {
+
+      const existingUser =
+        await this.userRepository.findOne({
+          where: {
+            email: createUserDto.email,
+          },
+        });
+
+      if (existingUser) {
+        throw new BadRequestException(
+          'Email already exists',
+        );
+      }
+
+      const user = new User();
+
+      user.firstName = createUserDto.firstName;
+      user.lastName = createUserDto.lastName;
+      user.email = createUserDto.email;
+
+      const salt = await bcrypt.genSalt();
+      user.password = await bcrypt.hash(createUserDto.password, salt);
+
+      user.dob = createUserDto.dob;
+      user.bloodGroup = createUserDto.bloodGroup;
+      user.gender = createUserDto.gender;
+
+      user.role = Role.Patient
+
+      const saved_user = await this.userRepository.save(user);
+
+      const { password, ...result } = saved_user;
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'User registered successfully',
+        data: result,
+      };
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Something went wrong',
+      );
+    }
+  }
+
+  findAllUsers() {
+    return `This action returns all users`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} user`;
+  }
+
+  update(id: number, updateUserDto: UpdateUserDto) {
+    return `This action updates a #${id} user`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} user`;
+  }
+}
