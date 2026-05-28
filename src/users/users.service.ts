@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -70,8 +70,16 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(data: Partial<User>): Promise<User> {
+
+    const user = await this.userRepository.findOneBy({ email: data.email })
+
+    if (!user) throw new HttpException(
+      'User not found',
+      HttpStatus.NOT_FOUND
+    );
+
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
