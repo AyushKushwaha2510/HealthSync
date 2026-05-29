@@ -18,11 +18,11 @@ export class Doctor {
     @Column()
     hospital!: string;
 
-    @Column({name:'license_number'})
+    @Column({ name: 'license_number' })
     licenseNumber!: string;
 
     // each doctor will have only one user profile
-    @OneToOne(() => User)
+    @OneToOne(() => User, { nullable: false })
     @JoinColumn({ name: 'user_id' })
     user!: User
 
