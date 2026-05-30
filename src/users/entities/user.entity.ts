@@ -2,9 +2,9 @@ import { Exclude } from "class-transformer";
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 export enum Role {
-    Admin = 'admin',
-    Doctor = 'doctor',
-    Patient = 'patient'
+    ADMIN = 'admin',
+    DOCTOR = 'doctor',
+    PATIENT = 'patient'
 }
 
 @Entity()
