@@ -42,7 +42,7 @@ export class UsersService {
       user.bloodGroup = createUserDto.bloodGroup;
       user.gender = createUserDto.gender;
 
-      user.role = Role.Patient
+      user.role = Role.PATIENT
 
       const saved_user = await this.userRepository.save(user);
 

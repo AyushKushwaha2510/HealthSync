@@ -59,7 +59,7 @@ export class DoctorsService {
     doctor.experience = createDoctorDTO.experience;
     doctor.hospital = createDoctorDTO.hospital;
     doctor.licenseNumber = createDoctorDTO.licenseNumber;
-    user.role = Role.Doctor;
+    user.role = Role.DOCTOR;
     await this.userRepository.save(user); // TODO: here i am updating the role of user, but if any error comes after, then this state becomes inconsistent.
     // use rollback later
     doctor.user = user;
