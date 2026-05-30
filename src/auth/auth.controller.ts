@@ -8,6 +8,8 @@ import { CreateDoctorDto } from 'src/doctors/dto/create-doctor.dto';
 import { JwtPayloadType } from 'src/types/payload.types';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './jwt.guard';
+import { CreateAdminDto } from 'src/admin/dto/create-admin.dto';
+import { AdminService } from 'src/admin/admin.service';
 
 @Controller('auth')
 export class AuthController {
@@ -15,6 +17,7 @@ export class AuthController {
     private readonly userService: UsersService,
     private readonly authService: AuthService,
     private readonly doctorService: DoctorsService,
+    private readonly adminService: AdminService
   ) { }
 
   @Post('register') // default register as patient
@@ -37,4 +40,10 @@ export class AuthController {
     return this.doctorService.registerAsDoctor(createDoctorDTO, req.user.email);
   }
 
+  @Post('register-as-admin')
+  registerAsAdmin(
+    @Body() createAdminDto: CreateAdminDto
+  ) {
+    return this.adminService.registerAsAdmin(createAdminDto)
+  }
 }

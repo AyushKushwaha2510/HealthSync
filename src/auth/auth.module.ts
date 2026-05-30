@@ -7,14 +7,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JWTStrategy } from './jwt-strategy';
 import { DoctorsService } from 'src/doctors/doctors.service';
 import { DoctorsModule } from 'src/doctors/doctors.module';
+import { AdminModule } from 'src/admin/admin.module';
 
 // i did not understood this entire module 
 // why jwtmodule and JWTStrategy as provider
 @Module({
   imports: [
     UsersModule,
-
     DoctorsModule,
+    AdminModule,
 
     JwtModule.registerAsync({
       imports: [ConfigModule],
