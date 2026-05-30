@@ -20,64 +20,64 @@ export class DoctorsService {
     private readonly userService: UsersService
   ) { }
 
-  async registerAsDoctor(
-    createDoctorDTO: CreateDoctorDto,
-    email: string
-  ) {
-    // find user form JWT payload
-    const user = await this.userService.findOne({ email })
-    if (!user) throw new BadRequestException('User Not Found')
+  // async registerAsDoctor(
+  //   createDoctorDTO: CreateDoctorDto,
+  //   email: string
+  // ) {
+  //   // find user form JWT payload
+  //   const user = await this.userService.findOne({ email })
+  //   if (!user) throw new BadRequestException('User Not Found')
 
-    const existingUserDoctor = await this.doctorRepository.findOne({
-      where: {
-        user: {
-          id: user.id
-        }
-      },
-    });
+  //   const existingUserDoctor = await this.doctorRepository.findOne({
+  //     where: {
+  //       user: {
+  //         id: user.id
+  //       }
+  //     },
+  //   });
 
-    if (existingUserDoctor) {
-      throw new BadRequestException(
-        'User is already registered as doctor'
-      );
-    }
+  //   if (existingUserDoctor) {
+  //     throw new BadRequestException(
+  //       'User is already registered as doctor'
+  //     );
+  //   }
 
-    const existingDoctorWithLicense =
-      await this.doctorRepository.findOneBy({
-        licenseNumber: createDoctorDTO.licenseNumber
-      })
+  //   const existingDoctorWithLicense =
+  //     await this.doctorRepository.findOneBy({
+  //       licenseNumber: createDoctorDTO.licenseNumber
+  //     })
 
-    if (existingDoctorWithLicense) {
-      throw new BadRequestException(
-        'Doctor already exists with this Lisense Number',
-      );
-    }
+  //   if (existingDoctorWithLicense) {
+  //     throw new BadRequestException(
+  //       'Doctor already exists with this Lisense Number',
+  //     );
+  //   }
 
-    const doctor = new Doctor();
+  //   const doctor = new Doctor();
 
-    doctor.specialization = createDoctorDTO.specialization;
-    doctor.experience = createDoctorDTO.experience;
-    doctor.hospital = createDoctorDTO.hospital;
-    doctor.licenseNumber = createDoctorDTO.licenseNumber;
-    user.role = Role.DOCTOR;
-    await this.userRepository.save(user); // TODO: here i am updating the role of user, but if any error comes after, then this state becomes inconsistent.
-    // use rollback later
-    doctor.user = user;
+  //   doctor.specialization = createDoctorDTO.specialization;
+  //   doctor.experience = createDoctorDTO.experience;
+  //   doctor.hospital = createDoctorDTO.hospital;
+  //   doctor.licenseNumber = createDoctorDTO.licenseNumber;
+  //   user.role = Role.DOCTOR;
+  //   await this.userRepository.save(user); // TODO: here i am updating the role of user, but if any error comes after, then this state becomes inconsistent.
+  //   // use rollback later
+  //   doctor.user = user;
 
-    const newDoctor = await this.doctorRepository.save(doctor);
+  //   const newDoctor = await this.doctorRepository.save(doctor);
 
-    const { password, ...userWithoutPassword } = newDoctor.user;
+  //   const { password, ...userWithoutPassword } = newDoctor.user;
 
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: 'Docter registered successfully',
-      data: {
-        ...newDoctor,
-        user: userWithoutPassword
-      }
-    };
+  //   return {
+  //     statusCode: HttpStatus.CREATED,
+  //     message: 'Docter registered successfully',
+  //     data: {
+  //       ...newDoctor,
+  //       user: userWithoutPassword
+  //     }
+  //   };
 
-  }
+  // }
 
   findAll() {
     return `This action returns all doctors`;
