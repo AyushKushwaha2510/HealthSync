@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, NotImplementedException } from '@nestjs/common';
 import { CreateDoctorRegistrationRequestDto } from './dto/create-doctor-registration-request.dto';
 import { UpdateDoctorRegistrationRequestDto } from './dto/update-doctor-registration-request.dto';
 import { UsersService } from 'src/users/users.service';
@@ -36,7 +36,7 @@ export class DoctorRegistrationRequestService {
 
     if (existingUserDoctor) {
       throw new BadRequestException(
-        'User is already registered as doctor'
+        'you have already requested to registered as doctor'
       );
     }
 
@@ -75,16 +75,62 @@ export class DoctorRegistrationRequestService {
 
   }
 
-  findAll() {
-    return `This action returns all doctorRegistrationRequest`;
+  async findAll() {
+    // fetch all the pending request
+    const pendingRequest: DoctorRegistrationRequest[] | null =
+      await this.doctorRegistrationRequestRepository.find({
+        where: {
+          status: Status.PENDING
+        }
+      })
+
+    if (pendingRequest.length == 0) throw new NotFoundException('No pending requests')
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Found All Requests',
+      data: pendingRequest
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} doctorRegistrationRequest`;
+  async findOne(id: string) {
+    const pendingRequest: DoctorRegistrationRequest | null =
+      await this.doctorRegistrationRequestRepository.findOne({
+        where: {
+          id,
+          status: Status.PENDING,
+        },
+      });
+
+    if (!pendingRequest) throw new NotFoundException('This request is not found')
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Found',
+      data: pendingRequest
+    }
   }
 
-  update(id: number, updateDoctorRegistrationRequestDto: UpdateDoctorRegistrationRequestDto) {
-    return `This action updates a #${id} doctorRegistrationRequest`;
+  async updateStatus(
+    id: string,
+    status: Status,
+    dto?: UpdateDoctorRegistrationRequestDto
+  ) {
+
+    const request = await this.doctorRegistrationRequestRepository.findOneBy({ id })
+
+    if (!request) throw new NotFoundException('This request is not found');
+
+    request.status = status;
+    request.rejectionReason = dto?.rejectionReason
+
+    const updatedRequest = await this.doctorRegistrationRequestRepository.save(request);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: `request ${status}`,
+      data: updatedRequest
+    }
   }
 
   remove(id: number) {

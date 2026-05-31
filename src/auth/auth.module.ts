@@ -8,6 +8,7 @@ import { JWTStrategy } from './jwt-strategy';
 import { DoctorsService } from 'src/doctors/doctors.service';
 import { DoctorsModule } from 'src/doctors/doctors.module';
 import { AdminModule } from 'src/admin/admin.module';
+import { DoctorRegistrationRequestModule } from 'src/doctor-registration-request/doctor-registration-request.module';
 
 // i did not understood this entire module 
 // why jwtmodule and JWTStrategy as provider
@@ -16,6 +17,7 @@ import { AdminModule } from 'src/admin/admin.module';
     UsersModule,
     DoctorsModule,
     AdminModule,
+    DoctorRegistrationRequestModule,
 
     JwtModule.registerAsync({
       imports: [ConfigModule],

@@ -10,14 +10,15 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './jwt.guard';
 import { CreateAdminDto } from 'src/admin/dto/create-admin.dto';
 import { AdminService } from 'src/admin/admin.service';
+import { DoctorRegistrationRequestService } from 'src/doctor-registration-request/doctor-registration-request.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly userService: UsersService,
     private readonly authService: AuthService,
-    private readonly doctorService: DoctorsService,
-    private readonly adminService: AdminService
+    private readonly adminService: AdminService,
+    private readonly doctorRegistrationRequestService: DoctorRegistrationRequestService
   ) { }
 
   @Post('register') // default register as patient
@@ -31,13 +32,13 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('register-as-doctor')
+  @Post('doctor-registeration-request')
   registerAsDoctor(
     @Body() createDoctorDTO: CreateDoctorDto,
     @Request() req
   ) {
-    console.log("request form ", req)
-    return this.doctorService.registerAsDoctor(createDoctorDTO, req.user.email);
+    // console.log("request form ", req)
+    return this.doctorRegistrationRequestService.registrationRequestAsDoctor(createDoctorDTO, req.user.email);
   }
 
   @Post('register-as-admin')

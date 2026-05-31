@@ -6,8 +6,8 @@ import { Status } from '../entities/doctor-registration-request.entity';
 export class UpdateDoctorRegistrationRequestDto extends PartialType(CreateDoctorRegistrationRequestDto) {
 
     @IsEnum(Status)
-    readonly Status!: string;
+    readonly status!: Status;
 
     @IsString()
-    readonly rejectionReason!: string;
+    readonly rejectionReason?: string;
 }
