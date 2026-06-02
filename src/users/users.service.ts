@@ -72,7 +72,14 @@ export class UsersService {
 
   async findOne(data: Partial<User>): Promise<User> {
 
-    const user = await this.userRepository.findOneBy({ email: data.email })
+    const user = await this.userRepository.findOne({
+      where: {
+        email: data.email
+      },
+      select: {
+        password: true
+      }
+    })
 
     if (!user) throw new HttpException(
       'User not found',
