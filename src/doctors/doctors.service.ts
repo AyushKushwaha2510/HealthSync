@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { Doctor } from './entities/doctor.entity';
@@ -79,12 +79,41 @@ export class DoctorsService {
 
   // }
 
-  findAll() {
-    return `This action returns all doctors`;
+  async findAll(
+    specialization?: string,
+    hospital?: string
+  ) {
+
+    const criteria = {
+      ...(specialization && { specialization }),
+      ...(hospital && { hospital }),
+    };
+
+    const doctors = await this.doctorRepository.findBy(criteria);
+
+    if (doctors.length === 0) {
+      throw new NotFoundException(
+        'No doctors found'
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Doctors Found',
+      data: doctors
+    }
+
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} doctor`;
+  async findOne(id: string) {
+    const doctor = await this.doctorRepository.findOne({
+      where: { id },
+      relations: {
+        user: true,
+        appointments: true
+      }
+    });
+    return doctor
   }
 
   update(id: number, updateDoctorDto: UpdateDoctorDto) {
