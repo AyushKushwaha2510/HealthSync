@@ -27,13 +27,13 @@ export class User {
     password!: string;
 
     @Column({ type: 'date' })
-    dob!: Date;
+    dob!: string;
 
     @Column()
     gender!: string;
 
     @Column({ name: 'blood_group', nullable: true })
-    bloodGroup!: string;
+    bloodGroup?: string;
 
     @Column({
         type: 'enum',

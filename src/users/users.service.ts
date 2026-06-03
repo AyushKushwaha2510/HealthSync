@@ -14,56 +14,45 @@ export class UsersService {
   ) { }
 
   async registerUser(createUserDto: CreateUserDto) {
-    try {
 
-      const existingUser =
-        await this.userRepository.findOne({
-          where: {
-            email: createUserDto.email,
-          },
-        });
+    const existingUser =
+      await this.userRepository.findOne({
+        where: {
+          email: createUserDto.email,
+        },
+      });
 
-      if (existingUser) {
-        throw new BadRequestException(
-          'Email already exists',
-        );
-      }
-
-      const user = new User();
-
-      user.firstName = createUserDto.firstName;
-      user.lastName = createUserDto.lastName;
-      user.email = createUserDto.email;
-
-      const salt = await bcrypt.genSalt();
-      user.password = await bcrypt.hash(createUserDto.password, salt);
-
-      user.dob = createUserDto.dob;
-      user.bloodGroup = createUserDto.bloodGroup;
-      user.gender = createUserDto.gender;
-
-      user.role = Role.PATIENT
-
-      const saved_user = await this.userRepository.save(user);
-
-      const { password, ...result } = saved_user;
-
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: 'User registered successfully',
-        data: result,
-      };
-    } catch (error) {
-      console.log(error);
-
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-
-      throw new InternalServerErrorException(
-        'Something went wrong',
+    if (existingUser) {
+      throw new BadRequestException(
+        'Email already exists',
       );
     }
+
+    const user = new User();
+
+    user.firstName = createUserDto.firstName;
+    user.lastName = createUserDto.lastName;
+    user.email = createUserDto.email;
+
+    const salt = await bcrypt.genSalt();
+    user.password = await bcrypt.hash(createUserDto.password, salt);
+
+    user.dob = createUserDto.dob;
+    user.bloodGroup = createUserDto.bloodGroup;
+    user.gender = createUserDto.gender;
+
+    user.role = Role.PATIENT
+
+    const saved_user = await this.userRepository.save(user);
+
+    const { password, ...result } = saved_user;
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'User registered successfully',
+      data: result,
+    };
+
   }
 
   findAllUsers() {
