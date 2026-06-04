@@ -4,6 +4,8 @@ import { Appointment } from "src/appointments/entities/appointment.entity";
 import { Doctor } from "src/doctors/entities/doctor.entity";
 import { Patient } from "src/patients/entities/patient.entity";
 import { User } from "src/users/entities/user.entity";
+import { Admin } from "src/admin/entities/admin.entity";
+import { DoctorRegistrationRequest } from "src/doctor-registration-request/entities/doctor-registration-request.entity";
 
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
     imports: [ConfigModule],
@@ -20,7 +22,7 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
             database: configService.get<string>("dbName"),
             password: configService.get<string>("dbPassword"),
             // entities: ["dist/**/*.entity.js"],
-            entities: [User, Patient, Doctor, Appointment],
+            entities: [User, Patient, Doctor, Admin, Appointment, DoctorRegistrationRequest],
             // synchronize: false,
             synchronize: true, // keep it false in production
             migrations: ["dist/db/migrations/*.js"],
