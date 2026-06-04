@@ -65,7 +65,14 @@ export class UsersService {
         email: data.email,
       },
       select:{
-        password:false,
+        id:true,
+        firstName:true,
+        lastName:true,
+        email:true,
+        dob:true,
+        gender:true,
+        role:true,
+        bloodGroup:true
       }
     });
 

@@ -22,13 +22,13 @@ export class User {
     @Column({ unique: true })
     email!: string;
 
-    @Column()
+    @Column({ select: false })
     @Exclude()
     password!: string;
 
     @Column({ type: 'date' })
     dob!: string;
-    
+
     @Column()
     gender!: string;
 
