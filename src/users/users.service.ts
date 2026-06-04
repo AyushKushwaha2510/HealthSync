@@ -11,11 +11,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { Patient } from 'src/patients/entities/patient.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Patient)
+    private readonly patientRepository: Repository<Patient>,
   ) {}
 
   async registerUser(createUserDto: CreateUserDto) {
@@ -48,6 +51,12 @@ export class UsersService {
 
     const { password, ...result } = saved_user;
 
+    const patient = this.patientRepository.create({
+      user: saved_user,
+    });
+
+    await this.patientRepository.save(patient);
+
     return {
       statusCode: HttpStatus.CREATED,
       message: 'User registered successfully',
@@ -64,16 +73,16 @@ export class UsersService {
       where: {
         email: data.email,
       },
-      select:{
-        id:true,
-        firstName:true,
-        lastName:true,
-        email:true,
-        dob:true,
-        gender:true,
-        role:true,
-        bloodGroup:true
-      }
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        dob: true,
+        gender: true,
+        role: true,
+        bloodGroup: true,
+      },
     });
 
     if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -85,6 +94,17 @@ export class UsersService {
     return await this.userRepository.findOne({
       where: {
         email: email,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        dob: true,
+        gender: true,
+        role: true,
+        bloodGroup: true,
+        password: true,
       },
     });
   }
