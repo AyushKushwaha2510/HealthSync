@@ -1,31 +1,32 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from "bcryptjs";
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
-
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>
-  ) { }
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+  ) {}
 
   async registerUser(createUserDto: CreateUserDto) {
-
-    const existingUser =
-      await this.userRepository.findOne({
-        where: {
-          email: createUserDto.email,
-        },
-      });
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email: createUserDto.email,
+      },
+    });
 
     if (existingUser) {
-      throw new BadRequestException(
-        'Email already exists',
-      );
+      throw new BadRequestException('Email already exists');
     }
 
     const user = new User();
@@ -41,7 +42,7 @@ export class UsersService {
     user.bloodGroup = createUserDto.bloodGroup;
     user.gender = createUserDto.gender;
 
-    user.role = Role.PATIENT
+    user.role = Role.PATIENT;
 
     const saved_user = await this.userRepository.save(user);
 
@@ -52,7 +53,6 @@ export class UsersService {
       message: 'User registered successfully',
       data: result,
     };
-
   }
 
   findAllUsers() {
@@ -60,26 +60,26 @@ export class UsersService {
   }
 
   async findOne(data: Partial<User>): Promise<User> {
-
     const user = await this.userRepository.findOne({
       where: {
-        email: data.email
+        email: data.email,
       },
-      select: {
-        password: true
+      select:{
+        password:false,
       }
-    })
+    });
 
-    if (!user) throw new HttpException(
-      'User not found',
-      HttpStatus.NOT_FOUND
-    );
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
     return user;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ email });
+    return await this.userRepository.findOne({
+      where: {
+        email: email,
+      },
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
