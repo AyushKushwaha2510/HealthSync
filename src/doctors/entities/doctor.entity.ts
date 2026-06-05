@@ -1,5 +1,4 @@
 import { Appointment } from "src/appointments/entities/appointment.entity";
-import { Patient } from "src/patients/entities/patient.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
