@@ -25,12 +25,12 @@ export class AuthService {
     statusCode: number;
     message: string;
     data: {
-      accessToken:string,
-      user:{
-        email:string,
-        userId:string,
-        role:Role
-      }
+      accessToken: string;
+      user: {
+        email: string;
+        userId: string;
+        role: Role;
+      };
     };
   }> {
     let user: User | Admin | null = await this.userService.findByEmail(
@@ -44,6 +44,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
+    console.log('req form admni', user);
 
     const isPasswordMatched: boolean = await bcrypt.compare(
       loginDTO.password,
@@ -71,9 +72,9 @@ export class AuthService {
         message: 'Logged In Successfully',
         data: {
           accessToken,
-          user:{
-            ...payload
-          }
+          user: {
+            ...payload,
+          },
         },
       };
     } else {

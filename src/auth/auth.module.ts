@@ -10,14 +10,13 @@ import { DoctorsModule } from 'src/doctors/doctors.module';
 import { AdminModule } from 'src/admin/admin.module';
 import { DoctorRegistrationRequestModule } from 'src/doctor-registration-request/doctor-registration-request.module';
 
-// i did not understood this entire module 
+// i did not understood this entire module
 // why jwtmodule and JWTStrategy as provider
 @Module({
   imports: [
     UsersModule,
     DoctorsModule,
     AdminModule,
-    DoctorRegistrationRequestModule,
 
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -32,9 +31,8 @@ import { DoctorRegistrationRequestModule } from 'src/doctor-registration-request
         },
       }),
     }),
-
   ],
   controllers: [AuthController],
   providers: [AuthService, JWTStrategy],
 })
-export class AuthModule { }
+export class AuthModule {}

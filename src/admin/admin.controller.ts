@@ -16,21 +16,6 @@ export class AdminController {
     private readonly doctorService: DoctorsService
   ) { }
 
-  // @Post()
-  // // create(@Body() createAdminDto: CreateAdminDto) {
-  // //   return this.adminService.create(createAdminDto);
-  // // }
-
-  // @Get()
-  // findAll() {
-  //   return this.adminService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.adminService.findOne(+id);
-  // }
-
   @UseGuards(JwtAdminGuard)
   @Get('doctor-requests')
   findAllPendingDoctorRequest() {
@@ -46,7 +31,7 @@ export class AdminController {
   }
 
   @UseGuards(JwtAdminGuard)
-  @Patch('doctor-requests/:id/approve')
+  @Patch()
   approveDoctorRequest(
     @Param('id') id: string,
   ) {
@@ -91,8 +76,10 @@ export class AdminController {
   //   return this.adminService.update(+id, updateAdminDto);
   // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.adminService.remove(+id);
-  // }
+  @Delete('all-doctors/:id')
+  remove(
+    @Param('id') id: string
+  ) {
+    return this.doctorService.remove(id);
+  }
 }

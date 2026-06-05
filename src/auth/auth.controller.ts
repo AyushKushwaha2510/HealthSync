@@ -18,7 +18,6 @@ export class AuthController {
     private readonly userService: UsersService,
     private readonly authService: AuthService,
     private readonly adminService: AdminService,
-    private readonly doctorRegistrationRequestService: DoctorRegistrationRequestService
   ) { }
 
   @Post('register') // default register as patient
@@ -29,16 +28,6 @@ export class AuthController {
   @Post('login')
   login(@Body() loginDTO: LoginDTO) {
     return this.authService.login(loginDTO)
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('doctor-registeration-request')
-  registerAsDoctor(
-    @Body() createDoctorDTO: CreateDoctorDto,
-    @Request() req
-  ) {
-    // console.log("request form ", req)
-    return this.doctorRegistrationRequestService.registrationRequestAsDoctor(createDoctorDTO, req.user.email);
   }
 
   @Post('register-as-admin')
