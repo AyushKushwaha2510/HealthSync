@@ -1,18 +1,36 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsString, Min } from 'class-validator';
+import {
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from 'class-validator';
 
 export class CreateDoctorRegistrationRequestDto {
   @IsString()
+  @IsNotEmpty({ message: 'Specialization is Required' })
   readonly specialization!: string;
 
   @Type(() => Number)
   @IsInt()
   @Min(0)
+  @IsNotEmpty({ message: 'Experience is Required' })
   readonly experience!: number;
 
-  @IsString()
-  readonly hospital!: string;
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  readonly hospitalIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  readonly clinicIds?: string[];
 
   @IsString()
+  @IsNotEmpty({ message: 'License Number is Required' })
   readonly licenseNumber!: string;
 }

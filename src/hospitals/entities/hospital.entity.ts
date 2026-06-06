@@ -1,3 +1,4 @@
+import { Address } from 'src/address/entity/address.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import {
@@ -16,8 +17,8 @@ export class Hospital {
   @Column()
   name!: string;
 
-  @Column()
-  address!: string;
+  @Column(() => Address)
+  address!: Address;
 
   @Column({ nullable: true })
   phone?: string;

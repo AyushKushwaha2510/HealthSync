@@ -31,7 +31,7 @@ export class AdminController {
   }
 
   @UseGuards(JwtAdminGuard)
-  @Patch()
+  @Patch('doctor-requests/:id/approve')
   approveDoctorRequest(
     @Param('id') id: string,
   ) {

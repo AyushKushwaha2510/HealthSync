@@ -5,11 +5,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DoctorRegistrationRequest } from './entities/doctor-registration-request.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersModule } from 'src/users/users.module';
+import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { HospitalsModule } from 'src/hospitals/hospitals.module';
+import { Hospital } from 'src/hospitals/entities/hospital.entity';
+import { Clinic } from 'src/clinics/entities/clinic.entity';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
-    TypeOrmModule.forFeature([DoctorRegistrationRequest, User]),
+    TypeOrmModule.forFeature([
+      DoctorRegistrationRequest,
+      User,
+      Doctor,
+      Hospital,
+      Clinic,
+    ]),
   ],
   controllers: [DoctorRegistrationRequestController],
   providers: [DoctorRegistrationRequestService],

@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateDoctorDto } from './create-doctor.dto';
-import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsArray, IsInt, IsOptional, IsUUID, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateDoctorDto extends PartialType(CreateDoctorDto) {
@@ -10,7 +10,13 @@ export class UpdateDoctorDto extends PartialType(CreateDoctorDto) {
   @IsOptional()
   readonly experience?: number;
 
-  @IsString()
   @IsOptional()
-  readonly hospital?: string;
+  @IsArray()
+  @IsUUID('4', { each: true })
+  readonly hospitalIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  readonly clinicIds?: string[];
 }

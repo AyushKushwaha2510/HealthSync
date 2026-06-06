@@ -1,49 +1,71 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, NotImplementedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  NotImplementedException,
+} from '@nestjs/common';
 import { CreateDoctorRegistrationRequestDto } from './dto/create-doctor-registration-request.dto';
 import { UpdateDoctorRegistrationRequestDto } from './dto/update-doctor-registration-request.dto';
 import { UsersService } from 'src/users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { DoctorRegistrationRequest, Status } from './entities/doctor-registration-request.entity';
+import { In, Repository } from 'typeorm';
+import {
+  DoctorRegistrationRequest,
+  Status,
+} from './entities/doctor-registration-request.entity';
+import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { Hospital } from 'src/hospitals/entities/hospital.entity';
+import { Clinic } from 'src/clinics/entities/clinic.entity';
 
 @Injectable()
 export class DoctorRegistrationRequestService {
-
   constructor(
     @InjectRepository(DoctorRegistrationRequest)
     private readonly doctorRegistrationRequestRepository: Repository<DoctorRegistrationRequest>,
 
+    @InjectRepository(Doctor)
+    private readonly doctorRepository: Repository<Doctor>,
+
+    @InjectRepository(Hospital)
+    private readonly hospitalRepository: Repository<Hospital>,
+
+    @InjectRepository(Clinic)
+    private readonly clinicRepository: Repository<Clinic>,
+
     private readonly userService: UsersService,
-  ) { }
+  ) {}
 
   async registrationRequestAsDoctor(
     createDoctorRegistrationRequestDto: CreateDoctorRegistrationRequestDto,
-    email: string
+    email: string,
   ) {
     // find user form JWT payload
-    const user = await this.userService.findOne({ email })
-    if (!user) throw new BadRequestException('User Not Found')
+    const user = await this.userService.findOne({ email });
+    if (!user) throw new BadRequestException('User Not Found');
 
-    const existingUserDoctor = await this.doctorRegistrationRequestRepository.findOne({
-      where: {
-        user: {
-          id: user.id
-        }
-      },
-    });
+    const existingUserDoctor =
+      await this.doctorRegistrationRequestRepository.findOne({
+        where: {
+          user: {
+            id: user.id,
+          },
+        },
+      });
 
     // here check both existing request as well as existing doctor
 
     if (existingUserDoctor) {
       throw new BadRequestException(
-        'you have already requested to registered as doctor'
+        'you have already requested to registered as doctor',
       );
     }
 
     const existingDoctorWithLicense =
       await this.doctorRegistrationRequestRepository.findOneBy({
-        licenseNumber: createDoctorRegistrationRequestDto.licenseNumber
-      })
+        licenseNumber: createDoctorRegistrationRequestDto.licenseNumber,
+      });
 
     if (existingDoctorWithLicense) {
       throw new BadRequestException(
@@ -53,14 +75,32 @@ export class DoctorRegistrationRequestService {
 
     const doctorRequest = new DoctorRegistrationRequest();
 
-    doctorRequest.specialization = createDoctorRegistrationRequestDto.specialization;
+    doctorRequest.specialization =
+      createDoctorRegistrationRequestDto.specialization;
     doctorRequest.experience = createDoctorRegistrationRequestDto.experience;
-    doctorRequest.hospital = createDoctorRegistrationRequestDto.hospital;
-    doctorRequest.licenseNumber = createDoctorRegistrationRequestDto.licenseNumber;
-    doctorRequest.user = user;
-    doctorRequest.status = Status.PENDING
 
-    const newDoctorRequest = await this.doctorRegistrationRequestRepository.save(doctorRequest);
+    const hospitals = createDoctorRegistrationRequestDto.hospitalIds?.length
+      ? await this.hospitalRepository.findBy({
+          id: In(createDoctorRegistrationRequestDto.hospitalIds),
+        })
+      : [];
+
+    const clinics = createDoctorRegistrationRequestDto.clinicIds?.length
+      ? await this.clinicRepository.findBy({
+          id: In(createDoctorRegistrationRequestDto.clinicIds),
+        })
+      : [];
+
+    doctorRequest.hospitals = hospitals;
+    doctorRequest.clinics = clinics;
+
+    doctorRequest.licenseNumber =
+      createDoctorRegistrationRequestDto.licenseNumber;
+    doctorRequest.user = user;
+    doctorRequest.status = Status.PENDING;
+
+    const newDoctorRequest =
+      await this.doctorRegistrationRequestRepository.save(doctorRequest);
 
     const { password, ...userWithoutPassword } = newDoctorRequest.user;
 
@@ -69,10 +109,9 @@ export class DoctorRegistrationRequestService {
       message: 'Your request has been sent to administrator successfully',
       data: {
         ...newDoctorRequest,
-        user: userWithoutPassword
-      }
+        user: userWithoutPassword,
+      },
     };
-
   }
 
   async findAll() {
@@ -80,17 +119,18 @@ export class DoctorRegistrationRequestService {
     const pendingRequest: DoctorRegistrationRequest[] | null =
       await this.doctorRegistrationRequestRepository.find({
         where: {
-          status: Status.PENDING
-        }
-      })
+          status: Status.PENDING,
+        },
+      });
 
-    if (pendingRequest.length == 0) throw new NotFoundException('No pending requests')
+    if (pendingRequest.length == 0)
+      throw new NotFoundException('No pending requests');
 
     return {
       statusCode: HttpStatus.FOUND,
       message: 'Found All Requests',
-      data: pendingRequest
-    }
+      data: pendingRequest,
+    };
   }
 
   async findOne(id: string) {
@@ -100,37 +140,54 @@ export class DoctorRegistrationRequestService {
           id,
           status: Status.PENDING,
         },
+        relations: {
+          user: true,
+          hospitals:true,
+          clinics:true,
+        },
       });
 
-    if (!pendingRequest) throw new NotFoundException('This request is not found')
+    if (!pendingRequest)
+      throw new NotFoundException('This request is not found');
 
     return {
       statusCode: HttpStatus.FOUND,
       message: 'Found',
-      data: pendingRequest
-    }
+      data: pendingRequest,
+    };
   }
 
   async updateStatus(
     id: string,
     status: Status,
-    dto?: UpdateDoctorRegistrationRequestDto
+    dto?: UpdateDoctorRegistrationRequestDto,
   ) {
-
-    const request = await this.doctorRegistrationRequestRepository.findOneBy({ id })
+    const request = await this.doctorRegistrationRequestRepository.findOneBy({
+      id,
+    });
 
     if (!request) throw new NotFoundException('This request is not found');
 
     request.status = status;
-    request.rejectionReason = dto?.rejectionReason
+    request.rejectionReason = dto?.rejectionReason;
 
-    const updatedRequest = await this.doctorRegistrationRequestRepository.save(request);
+    const updatedRequest =
+      await this.doctorRegistrationRequestRepository.save(request);
+
+    // if approved then save user as DOCTOR
+    const doctor = await this.doctorRegistrationRequestRepository.findOneBy({
+      id,
+    });
+    if (doctor) {
+      console.log('docotr', doctor);
+      const savedDoctor = await this.doctorRepository.save(doctor);
+    }
 
     return {
       statusCode: HttpStatus.OK,
-      message: `request ${status}`,
-      data: updatedRequest
-    }
+      message: `${status.toUpperCase()}`,
+      data: updatedRequest,
+    };
   }
 
   remove(id: number) {
