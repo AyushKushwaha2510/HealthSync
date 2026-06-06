@@ -3,11 +3,12 @@ import { CreateDoctorRegistrationRequestDto } from './create-doctor-registration
 import { IsEnum, IsString } from 'class-validator';
 import { Status } from '../entities/doctor-registration-request.entity';
 
-export class UpdateDoctorRegistrationRequestDto extends PartialType(CreateDoctorRegistrationRequestDto) {
+export class UpdateDoctorRegistrationRequestDto extends PartialType(
+  CreateDoctorRegistrationRequestDto,
+) {
+  @IsEnum(Status)
+  readonly status!: Status;
 
-    @IsEnum(Status)
-    readonly status!: Status;
-
-    @IsString()
-    readonly rejectionReason?: string;
+  @IsString({ message: 'Rejection Reason Required' })
+  readonly rejectionReason?: string;
 }

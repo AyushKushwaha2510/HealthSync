@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   NotImplementedException,
 } from '@nestjs/common';
@@ -142,8 +143,8 @@ export class DoctorRegistrationRequestService {
         },
         relations: {
           user: true,
-          hospitals:true,
-          clinics:true,
+          hospitals: true,
+          clinics: true,
         },
       });
 
@@ -169,18 +170,45 @@ export class DoctorRegistrationRequestService {
     if (!request) throw new NotFoundException('This request is not found');
 
     request.status = status;
+    if (status === Status.REJECTED) {
+      console.log('rejecrt reaosnm', dto?.rejectionReason);
+      if (!dto?.rejectionReason)
+        throw new InternalServerErrorException('Rejection Reason is Required');
+    }
     request.rejectionReason = dto?.rejectionReason;
 
     const updatedRequest =
       await this.doctorRegistrationRequestRepository.save(request);
+    console.log('updated request', updatedRequest);
 
-    // if approved then save user as DOCTOR
-    const doctor = await this.doctorRegistrationRequestRepository.findOneBy({
-      id,
-    });
-    if (doctor) {
-      console.log('docotr', doctor);
-      const savedDoctor = await this.doctorRepository.save(doctor);
+    if (status === Status.APPROVED) {
+      // if approved then save user as DOCTOR
+      const doctor = await this.doctorRegistrationRequestRepository.findOne({
+        where: { id },
+        relations: {
+          hospitals: {
+            doctors: true,
+            appointments: true,
+          },
+          clinics: {
+            doctors: true,
+            appointments: true,
+          },
+          user: true,
+        },
+      });
+
+      if (doctor) {
+        const newDoctor = this.doctorRepository.create({
+          specialization: doctor.specialization,
+          experience: doctor.experience,
+          licenseNumber: doctor.licenseNumber,
+          user: doctor.user,
+          hospitals: doctor.hospitals,
+          clinics: doctor.clinics,
+        });
+        await this.doctorRepository.save(newDoctor);
+      }
     }
 
     return {

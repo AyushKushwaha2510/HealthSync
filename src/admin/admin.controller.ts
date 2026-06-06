@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseUUIDPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
@@ -13,8 +24,8 @@ export class AdminController {
   constructor(
     private readonly adminService: AdminService,
     private readonly doctorRegistrationRequestService: DoctorRegistrationRequestService,
-    private readonly doctorService: DoctorsService
-  ) { }
+    private readonly doctorService: DoctorsService,
+  ) {}
 
   @UseGuards(JwtAdminGuard)
   @Get('doctor-requests')
@@ -24,20 +35,16 @@ export class AdminController {
 
   @UseGuards(JwtAdminGuard)
   @Get('doctor-requests/:id')
-  findOnePendingDoctorRequest(
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  findOnePendingDoctorRequest(@Param('id', ParseUUIDPipe) id: string) {
     return this.doctorRegistrationRequestService.findOne(id);
   }
 
   @UseGuards(JwtAdminGuard)
   @Patch('doctor-requests/:id/approve')
-  approveDoctorRequest(
-    @Param('id') id: string,
-  ) {
+  approveDoctorRequest(@Param('id') id: string) {
     return this.doctorRegistrationRequestService.updateStatus(
       id,
-      Status.APPROVED
+      Status.APPROVED,
     );
   }
 
@@ -45,12 +52,12 @@ export class AdminController {
   @Patch('doctor-requests/:id/reject')
   rejectDoctorRequest(
     @Param('id') id: string,
-    @Body() dto: UpdateDoctorRegistrationRequestDto
+    @Body() dto: UpdateDoctorRegistrationRequestDto,
   ) {
     return this.doctorRegistrationRequestService.updateStatus(
       id,
       Status.REJECTED,
-      dto
+      dto,
     );
   }
 
@@ -65,9 +72,7 @@ export class AdminController {
 
   @UseGuards(JwtAdminGuard)
   @Get('all-doctors/:id')
-  findDoctorById(
-    @Param('id') id:string
-  ) {
+  findDoctorById(@Param('id') id: string) {
     return this.doctorService.findOne(id);
   }
 
@@ -77,9 +82,7 @@ export class AdminController {
   // }
 
   @Delete('all-doctors/:id')
-  remove(
-    @Param('id') id: string
-  ) {
+  remove(@Param('id') id: string) {
     return this.doctorService.remove(id);
   }
 }
