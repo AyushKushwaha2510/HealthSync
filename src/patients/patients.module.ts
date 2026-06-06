@@ -6,10 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DoctorRegistrationRequestModule } from 'src/doctor-registration-request/doctor-registration-request.module';
 
 @Module({
-  imports: [
-    DoctorRegistrationRequestModule,
-    TypeOrmModule.forFeature([Patient]),
-  ],
+  imports: [TypeOrmModule.forFeature([Patient])],
   controllers: [PatientsController],
   providers: [PatientsService],
   exports: [PatientsService],

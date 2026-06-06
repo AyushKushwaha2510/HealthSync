@@ -8,7 +8,6 @@ import { JwtAuthGuard } from 'src/auth/jwt.guard';
 export class PatientsController {
   constructor(
     private readonly patientsService: PatientsService,
-    private readonly doctorRegistrationRequestService: DoctorRegistrationRequestService,
   ) {}
 
   @Get('me')
@@ -18,15 +17,4 @@ export class PatientsController {
     return this.patientsService.findMyDetails(req.user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('doctor-registeration-request')
-  doctorRegistertRequest(
-    @Body() dto: CreateDoctorRegistrationRequestDto,
-    @Req() req,
-  ) {
-    return this.doctorRegistrationRequestService.registrationRequestAsDoctor(
-      dto,
-      req.user.email,
-    );
-  }
 }

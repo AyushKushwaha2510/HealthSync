@@ -13,9 +13,9 @@ export class Patient {
     user!: User;
 
     @OneToMany(() => Appointment, appointment => appointment.patient)
-    appointments!: Appointment[];
+    appointments?: Appointment[];
 
-    @Column()
-    disease!: string;
+    @Column({nullable:true})
+    disease?: string;
     
 }
