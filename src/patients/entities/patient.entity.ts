@@ -1,21 +1,26 @@
-import { Appointment } from "src/appointments/entities/appointment.entity";
-import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { User } from 'src/users/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-@Entity()
+@Entity('patients')
 export class Patient {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
 
-    @OneToOne(() => User)
-    @JoinColumn({ name: 'user_id' })
-    user!: User;
+  @OneToMany(() => Appointment, (appointment) => appointment.patient)
+  appointments?: Appointment[];
 
-    @OneToMany(() => Appointment, appointment => appointment.patient)
-    appointments?: Appointment[];
-
-    @Column({nullable:true})
-    disease?: string;
-    
+  @Column({ nullable: true })
+  disease?: string;
 }

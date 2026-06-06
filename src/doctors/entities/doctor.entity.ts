@@ -1,31 +1,48 @@
-import { Appointment } from "src/appointments/entities/appointment.entity";
-import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { Clinic } from 'src/clinics/entities/clinic.entity';
+import { Hospital } from 'src/hospitals/entities/hospital.entity';
+import { User } from 'src/users/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-@Entity()
+@Entity('doctors')
 export class Doctor {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @Column()
+  specialization!: string;
 
-    @Column()
-    specialization!: string;
+  @Column({ type: 'int' })
+  experience!: number;
 
-    @Column({ type: 'int' })
-    experience!: number;
+  @Column({ name: 'license_number' })
+  licenseNumber!: string;
 
-    @Column()
-    hospital!: string;
+  // each doctor will have only one user profile
+  @OneToOne(() => User, { nullable: false })
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
 
-    @Column({ name: 'license_number' })
-    licenseNumber!: string;
+  // one doctor can have many appointments
+  @OneToMany(() => Appointment, (appointment) => appointment.doctor, {
+    nullable: true,
+  })
+  appointments?: Appointment[];
 
-    // each doctor will have only one user profile
-    @OneToOne(() => User, { nullable: false })
-    @JoinColumn({ name: 'user_id' })
-    user!: User
+  @ManyToMany(() => Hospital, (hospital) => hospital.doctors)
+  @JoinTable()
+  hospitals?: Hospital[];
 
-    // one doctor can have many appointments
-    @OneToMany(() => Appointment, appointment => appointment.doctor)
-    appointments!: Appointment[];
+  @ManyToMany(() => Clinic, (clinic) => clinic.doctors)
+  @JoinTable()
+  clinics?: Clinic[];
 }
