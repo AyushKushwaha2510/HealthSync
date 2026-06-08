@@ -9,6 +9,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmAsyncConfig } from 'db/data-source';
 import { PatientsModule } from './patients/patients.module';
 import { DoctorsModule } from './doctors/doctors.module';
+import { HospitalsModule } from './hospitals/hospitals.module';
+import { AppointmentsModule } from './appointments/appointments.module';
+import { AuthModule } from './auth/auth.module';
+import { SeedModule } from './seed/seed.module';
+import { DoctorRegistrationRequestModule } from './doctor-registration-request/doctor-registration-request.module';
+import { AdminModule } from './admin/admin.module';
+import { ClinicsModule } from './clinics/clinics.module';
+import { DoctorsAvailabilityModule } from './doctors-availability/doctors-availability.module';
 
 @Module({
   imports: [
@@ -21,7 +29,15 @@ import { DoctorsModule } from './doctors/doctors.module';
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     UsersModule,
     PatientsModule,
-    DoctorsModule
+    DoctorsModule,
+    HospitalsModule,
+    AppointmentsModule,
+    AuthModule,
+    SeedModule,
+    DoctorRegistrationRequestModule,
+    AdminModule,
+    ClinicsModule,
+    DoctorsAvailabilityModule
   ],
   controllers: [AppController],
   providers: [AppService],
