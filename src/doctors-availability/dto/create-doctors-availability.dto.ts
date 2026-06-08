@@ -1,0 +1,20 @@
+import { IsEnum, IsNotEmpty, IsString, IsNumber, Min } from "class-validator";
+import { WeekDays } from "src/types/week.type";
+
+export class CreateDoctorsAvailabilityDto {
+  @IsEnum(WeekDays)
+  @IsNotEmpty({ message: 'Day is required' })
+  day!: WeekDays;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Start time is required' })
+  startTime!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'End time is required' })
+  endTime!: string;
+
+  @IsNumber()
+  @Min(5)
+  slotDuration!: number;
+}
