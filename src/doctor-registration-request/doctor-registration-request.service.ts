@@ -19,6 +19,7 @@ import {
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Hospital } from 'src/hospitals/entities/hospital.entity';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
+import { Role } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class DoctorRegistrationRequestService {
@@ -199,6 +200,10 @@ export class DoctorRegistrationRequestService {
       });
 
       if (doctor) {
+        // update the role of user
+        doctor.user.role = Role.DOCTOR;
+        await this.userService.updateRole(doctor.user.id, Role.DOCTOR)
+
         const newDoctor = this.doctorRepository.create({
           specialization: doctor.specialization,
           experience: doctor.experience,

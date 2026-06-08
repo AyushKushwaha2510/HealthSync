@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -111,6 +112,14 @@ export class UsersService {
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
+  }
+
+  async updateRole(id: string, role: Role) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException('This user if Not Found');
+    user.role = role;
+
+    await this.userRepository.save(user);
   }
 
   remove(id: number) {
