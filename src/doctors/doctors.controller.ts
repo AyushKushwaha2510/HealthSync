@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
@@ -20,7 +21,7 @@ import { DoctorsAvailabilityService } from 'src/doctors-availability/doctors-ava
 export class DoctorsController {
   constructor(
     private readonly doctorsService: DoctorsService,
-    private readonly availabilityService:DoctorsAvailabilityService
+    private readonly availabilityService: DoctorsAvailabilityService,
   ) {}
 
   // @Post()
@@ -33,10 +34,15 @@ export class DoctorsController {
     return this.doctorsService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.doctorsService.findOne(+id);
-  // }
+  @Get(':id')
+  findOneWithAvailableSlots(
+    @Param('id') id: string,
+    @Query('date') date: string,
+    @Query('hospitalId') hospitalId?: string,
+    @Query('clinicId') clinicId?: string,
+  ) {
+    return this.doctorsService.findOneWithAvailableSlots(id, date, hospitalId, clinicId);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDoctorDto: UpdateDoctorDto) {
@@ -52,9 +58,9 @@ export class DoctorsController {
   @Post('add-availability')
   async addAvailability(
     @Req() req,
-    @Body() data: CreateDoctorsAvailabilityDto
+    @Body() data: CreateDoctorsAvailabilityDto,
   ) {
-    console.log('req user', req.user)
-      return this.availabilityService.create(req.user.userId, data)
+    console.log('req user', req.user);
+    return this.availabilityService.create(req.user.userId, data);
   }
 }

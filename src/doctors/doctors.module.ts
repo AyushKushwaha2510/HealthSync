@@ -5,14 +5,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Doctor } from './entities/doctor.entity';
 import { UsersModule } from 'src/users/users.module';
 import { User } from 'src/users/entities/user.entity';
+import { DoctorsAvailability } from 'src/doctors-availability/entities/doctors-availability.entity';
+import { DoctorsAvailabilityService } from 'src/doctors-availability/doctors-availability.service';
+import { AppointmentsModule } from 'src/appointments/appointments.module';
 
 @Module({
-  imports:[
+  imports: [
     UsersModule,
-    TypeOrmModule.forFeature([Doctor, User])
+    AppointmentsModule,
+    TypeOrmModule.forFeature([Doctor, User, DoctorsAvailability]),
   ],
   controllers: [DoctorsController],
-  providers: [DoctorsService],
-  exports:[DoctorsService]
+  providers: [DoctorsService, DoctorsAvailabilityService],
+  exports: [DoctorsService],
 })
 export class DoctorsModule {}

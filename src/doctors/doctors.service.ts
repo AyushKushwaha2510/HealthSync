@@ -1,20 +1,23 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { Doctor } from './entities/doctor.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { Role, User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class DoctorsService {
-
   constructor(
     @InjectRepository(Doctor)
     private readonly doctorRepository: Repository<Doctor>,
-
-  ) { }
+  ) {}
 
   // async registerAsDoctor(
   //   createDoctorDTO: CreateDoctorDto,
@@ -75,52 +78,106 @@ export class DoctorsService {
 
   // }
 
-  async findAll(
-    specialization?: string,
-    hospital?: string
-  ) {
-
+  async findAll(specialization?: string, hospital?: string) {
     const criteria = {
       ...(specialization && { specialization }),
       ...(hospital && { hospital }),
     };
 
-    const doctors = await this.doctorRepository.findBy(criteria);
+    const doctors = await this.doctorRepository.find({
+      where: criteria,
+      relations: {
+        user: true,
+      },
+    });
 
     if (doctors.length === 0) {
-      throw new NotFoundException(
-        'No doctors found'
-      );
+      throw new NotFoundException('No doctors found');
     }
 
     return {
       statusCode: HttpStatus.FOUND,
       message: 'Doctors Found',
-      data: doctors
-    }
-
+      data: doctors,
+    };
   }
 
   async findOne(id: string) {
     const doctor = await this.doctorRepository.findOne({
       where: { id },
       relations: {
+        // i think after getting into to doctors profile, admin should only get the user reltion, and other relation arae to be fetched after selection from admin dashbord
         user: true,
-        appointments: true
-      }
+        appointments: true,
+        hospitals: true,
+        clinics: true,
+      },
     });
 
-    if(!doctor) throw new NotFoundException(
-      'Doctor Not Found'
-    )
+    if (!doctor) throw new NotFoundException('Doctor Not Found');
     return {
-      statusCode:HttpStatus.FOUND,
-      message:'success',
-      data:doctor
-    }
+      statusCode: HttpStatus.FOUND,
+      message: 'success',
+      data: doctor,
+    };
   }
 
-  // TODO: make a findOne, for patient, 
+  async findOneWithAvailableSlots(
+    id: string,
+    date: string,
+    hospitalId?: string,
+    clinicId?: string,
+  ) {
+    const criteria = {
+      ...(hospitalId && { id: hospitalId }),
+      ...(clinicId && { id: clinicId }),
+    };
+    const doctor = await this.doctorRepository.findOne({
+      where: {
+        id,
+        hospitals: {
+          id: hospitalId,
+        },
+        appointmentDateTime: Between(
+          new Date(`${date}T00:00:00`),
+          new Date(`${date}T23:59:59`),
+        ),
+      },
+      relations: {
+        user: true,
+        appointments: true,
+        hospitals: true,
+        clinics: true,
+      },
+    });
+
+    if (!doctor) throw new NotFoundException('Doctor Not Found');
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'success',
+      data: doctor,
+    };
+  }
+
+  async findOneByUserId(id: string) {
+    const docotor = await this.doctorRepository.findOne({
+      where: {
+        user: {
+          id,
+        },
+      },
+    });
+
+    if (!docotor) throw new NotFoundException('This user is not a Doctor');
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Doctor is Found',
+      data: docotor,
+    };
+  }
+
+  // TODO: make a findOne, for patient,
   // patient will also get same info as admin but only data of available appointments
 
   update(id: number, updateDoctorDto: UpdateDoctorDto) {
@@ -129,10 +186,9 @@ export class DoctorsService {
 
   async remove(id: string) {
     const doctor = await this.doctorRepository.delete({ id });
-    console.log("delete doctor", doctor)
-    if(doctor.affected == 0) throw new NotFoundException(
-      'Doctor not found, cannot remove'
-    )
+    console.log('delete doctor', doctor);
+    if (doctor.affected == 0)
+      throw new NotFoundException('Doctor not found, cannot remove');
     return `This action removes a #${id} doctor`;
   }
 }
