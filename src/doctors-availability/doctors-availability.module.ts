@@ -4,9 +4,14 @@ import { DoctorsAvailabilityController } from './doctors-availability.controller
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DoctorsAvailability } from './entities/doctors-availability.entity';
 import { DoctorsModule } from 'src/doctors/doctors.module';
+import { AppointmentsModule } from 'src/appointments/appointments.module';
 
 @Module({
-  imports: [DoctorsModule, TypeOrmModule.forFeature([DoctorsAvailability])],
+  imports: [
+    DoctorsModule,
+    AppointmentsModule,
+    TypeOrmModule.forFeature([DoctorsAvailability]),
+  ],
   controllers: [DoctorsAvailabilityController],
   providers: [DoctorsAvailabilityService],
   exports: [DoctorsAvailabilityService],

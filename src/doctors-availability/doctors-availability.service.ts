@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { DoctorsAvailability } from './entities/doctors-availability.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DoctorsService } from 'src/doctors/doctors.service';
+import { AppointmentsService } from 'src/appointments/appointments.service';
 
 @Injectable()
 export class DoctorsAvailabilityService {
@@ -17,12 +18,13 @@ export class DoctorsAvailabilityService {
     private readonly availabilityRepository: Repository<DoctorsAvailability>,
 
     private readonly doctorService: DoctorsService,
+    private readonly appointmentService: AppointmentsService,
   ) {}
 
   async create(userId: string, dto: CreateDoctorsAvailabilityDto) {
     // find the doctor with this id
     const doctor = await this.doctorService.findOneByUserId(userId);
-    
+
     if (!doctor)
       throw new InternalServerErrorException(
         'Doctor not associated with this user',
@@ -50,8 +52,29 @@ export class DoctorsAvailabilityService {
     };
   }
 
-  findAll() {
-    return `This action returns all doctorsAvailability`;
+  async findAll(
+    doctorIds?: string[],
+    weekdays?: string[],
+    fromDate?: string,
+    toDate?: string,
+    timings?: string[],
+    hospitalIds?: string[],
+    clinicIds?: string[],
+  ) {
+    const criteria = {
+      ...(doctorIds && { doctorIds }),
+      ...(weekdays && { weekdays }),
+      ...(timings && { timings }),
+      ...(hospitalIds && { hospitalIds }),
+      ...(clinicIds && { clinicIds }),
+    };
+
+    // calculate the current appointment count of doctor in the selected hospital/clinic
+    // const currentAppointmentCount =
+    //   await this.appointmentService.findAllAndCount(doctorIds, fromDate, toDate, hospitalIds, clinicIds);
+
+    const availableDoctors = await this.availabilityRepository.find()
+      return`This action returns all doctorsAvailability`;
   }
 
   findOne(id: number) {
