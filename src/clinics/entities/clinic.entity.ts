@@ -1,5 +1,6 @@
 import { Address } from 'src/address/entity/address.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { DoctorsAvailability } from 'src/doctors-availability/entities/doctors-availability.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import {
   Column,
@@ -28,4 +29,7 @@ export class Clinic {
 
   @OneToMany(() => Appointment, (appointment) => appointment.clinic)
   appointments!: Appointment[];
+
+  @OneToMany(() => DoctorsAvailability, (availability) => availability.clinic)
+  availabilities!: DoctorsAvailability[];
 }
