@@ -1,5 +1,6 @@
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
+import { DoctorsAvailability } from 'src/doctors-availability/entities/doctors-availability.entity';
 import { Hospital } from 'src/hospitals/entities/hospital.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -45,4 +46,7 @@ export class Doctor {
   @ManyToMany(() => Clinic, (clinic) => clinic.doctors)
   @JoinTable()
   clinics?: Clinic[];
+
+  @OneToMany(() => DoctorsAvailability, (availability) => availability.doctor)
+  availability!: DoctorsAvailability[];
 }
