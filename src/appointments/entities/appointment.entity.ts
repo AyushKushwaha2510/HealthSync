@@ -11,9 +11,9 @@ import {
 } from 'typeorm';
 
 enum Status {
-  Pending = 'pending',
-  Confirmed = 'confirmed',
-  Rejected = 'rejected',
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  REJETED = 'rejected',
 }
 
 @Entity('appointments')
@@ -21,11 +21,8 @@ export class Appointment {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'date' })
-  appointment_date!: Date;
-
-  @Column({ type: 'time' })
-  appointment_time!: Date;
+  @Column({ name: 'appointment_date_time', type: 'timestamp' })
+  appointmentDateTime!: Date;
 
   @Column({
     type: 'enum',
