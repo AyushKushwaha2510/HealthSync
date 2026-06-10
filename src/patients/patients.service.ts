@@ -22,14 +22,30 @@ export class PatientsService {
       },
       relations: {
         user: true,
-        appointments:true
+        appointments: true,
       },
     });
 
     return {
-      statusCode:HttpStatus.FOUND,
-      message:'Your Details are Found',
-      data:patient
+      statusCode: HttpStatus.FOUND,
+      message: 'Your Details are Found',
+      data: patient,
+    };
+  }
+
+  async findOne(userId: string) {
+    const patient = await this.patientRepository.findOne({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Your Details are Found',
+      data: patient,
     };
   }
 }
