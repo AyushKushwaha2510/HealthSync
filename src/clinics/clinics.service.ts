@@ -61,8 +61,14 @@ export class ClinicsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} clinic`;
+  async findOne(id: string) {
+    const clinic = await this.clinicRepository.findOneBy({ id });
+    
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Clinic is Found',
+      data: clinic,
+    };
   }
 
   update(id: number, updateClinicDto: UpdateClinicDto) {

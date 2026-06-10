@@ -61,8 +61,14 @@ export class HospitalsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} hospital`;
+  async findOne(id: string) {
+    const hospital = await this.hospitalRepository.findOneBy({ id });
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Hospital is Found',
+      data: hospital,
+    };
   }
 
   update(id: number, updateHospitalDto: UpdateHospitalDto) {
