@@ -33,8 +33,11 @@ export class Appointment {
   })
   status!: Status;
 
-  @Column({ nullable: true })
-  notes?: string | null;
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  notes?: string;
 
   @ManyToOne(() => Doctor, (doctor) => doctor.appointments)
   @JoinColumn({ name: 'doctor_id' })
