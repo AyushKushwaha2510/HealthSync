@@ -138,10 +138,12 @@ export class DoctorsService {
         hospitals: {
           id: hospitalId,
         },
-        appointmentDateTime: Between(
-          new Date(`${date}T00:00:00`),
-          new Date(`${date}T23:59:59`),
-        ),
+        appointments: {
+          appointmentDateTime: Between(
+            new Date(`${date}T00:00:00`),
+            new Date(`${date}T23:59:59`),
+          ),
+        },
       },
       relations: {
         user: true,
