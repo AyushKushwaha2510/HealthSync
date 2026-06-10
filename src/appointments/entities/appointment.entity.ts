@@ -10,10 +10,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-enum Status {
-  PENDING = 'pending',
+export enum Status {
+  PENDING_PAYMENT = 'pending_payment',
   CONFIRMED = 'confirmed',
-  REJETED = 'rejected',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  EXPIRED = 'expired',
 }
 
 @Entity('appointments')
@@ -32,7 +34,7 @@ export class Appointment {
   status!: Status;
 
   @Column({ nullable: true })
-  notes!: string;
+  notes?: string | null;
 
   @ManyToOne(() => Doctor, (doctor) => doctor.appointments)
   @JoinColumn({ name: 'doctor_id' })
@@ -46,11 +48,18 @@ export class Appointment {
     nullable: true,
   })
   @JoinColumn({ name: 'hospital_id' })
-  hospital?: Hospital;
+  hospital?: Hospital | null;
 
   @ManyToOne(() => Clinic, (clinic) => clinic.appointments, {
     nullable: true,
   })
   @JoinColumn({ name: 'clinic_id' })
-  clinic?: Clinic;
+  clinic?: Clinic | null;
+
+  @Column({
+    name: 'expires_at',
+    type: 'timestamp',
+    nullable: true,
+  })
+  expiresAt?: Date;
 }
