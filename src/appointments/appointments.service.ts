@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -21,6 +22,9 @@ import { ClinicsService } from 'src/clinics/clinics.service';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { Hospital } from 'src/hospitals/entities/hospital.entity';
 import { DoctorsService } from 'src/doctors/doctors.service';
+import { AdminService } from 'src/admin/admin.service';
+import { JwtPayloadType } from 'src/types/payload.types';
+import { Role } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AppointmentsService {
@@ -34,6 +38,7 @@ export class AppointmentsService {
     private readonly clinicService: ClinicsService,
   ) {}
 
+  // ==== CREATE APPOINTMENT ==== //
   async create(userId: string, dto: CreateAppointmentDto) {
     // extract patient info form this
     const { data: patient } = await this.patientService.findOne(userId);
@@ -78,8 +83,65 @@ export class AppointmentsService {
     return await this.appointmentRepository.save(appointment);
   }
 
-  findAll() {
-    return `This action returns all appointments`;
+  // ==== FIND ALL APPOINTMENTS ==== //
+  async findAll(user: JwtPayloadType) {
+    let appointments: Appointment[] | null = null;
+
+    // if user is admin show all appointments
+    if (user.role === Role.ADMIN) {
+      appointments = (await this.appointmentRepository.find()).sort();
+    }
+
+    // show only his appointments
+    if (user.role === Role.PATIENT) {
+      appointments = await this.appointmentRepository.find({
+        where: {
+          patient: {
+            user: {
+              id: user.userId,
+            },
+          },
+        },
+        relations: {
+          patient: true,
+          doctor: true,
+          hospital: true,
+          clinic: true,
+        },
+      });
+    }
+
+    // show only his appointments
+    if (user.role === Role.DOCTOR) {
+      appointments = await this.appointmentRepository.find({
+        where: {
+          doctor: {
+            user: {
+              id: user.userId,
+            },
+          },
+        },
+        relations: {
+          patient: {
+            user:true
+          },
+          doctor: {
+            user:true
+          },
+          hospital: true,
+          clinic: true,
+        },
+      });
+    }
+
+    if (!appointments)
+      throw new NotFoundException('You don&apos;t have any appointments');
+
+    return {
+      stautusCode: HttpStatus.FOUND,
+      message: 'success',
+      data: appointments,
+    };
   }
 
   async findAllAndCount(
