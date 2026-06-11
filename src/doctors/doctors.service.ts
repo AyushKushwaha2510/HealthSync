@@ -78,6 +78,26 @@ export class DoctorsService {
 
   // }
 
+  // ==== PROFILE ==== //
+  async profile(userId: string, doctorId: string) {
+    const doctor = await this.doctorRepository.findOne({
+      where: {
+        id: doctorId,
+      },
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!doctor) throw new NotFoundException('Doctor Not Found');
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'success',
+      data: doctor,
+    };
+  }
+
   async findAll(specialization?: string, hospital?: string) {
     const criteria = {
       ...(specialization && { specialization }),
@@ -162,20 +182,23 @@ export class DoctorsService {
   }
 
   async findOneByUserId(id: string) {
-    const docotor = await this.doctorRepository.findOne({
+    const doctor = await this.doctorRepository.findOne({
       where: {
         user: {
           id,
         },
       },
+      relations:{
+        user:true
+      }
     });
 
-    if (!docotor) throw new NotFoundException('This user is not a Doctor');
+    if (!doctor) throw new NotFoundException('This user is not a Doctor');
 
     return {
       statusCode: HttpStatus.FOUND,
       message: 'Doctor is Found',
-      data: docotor,
+      data: doctor,
     };
   }
 

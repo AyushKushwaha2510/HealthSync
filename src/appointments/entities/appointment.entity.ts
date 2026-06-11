@@ -29,7 +29,7 @@ export class Appointment {
   @Column({
     type: 'enum',
     enum: Status,
-    default: 'pending',
+    default: Status.PENDING_PAYMENT,
   })
   status!: Status;
 

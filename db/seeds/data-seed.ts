@@ -225,9 +225,9 @@ export const seedData = async (manager: EntityManager): Promise<void> => {
     if (rand < 0.7) {
       appointment.status = 'confirmed' as any;
     } else if (rand < 0.9) {
-      appointment.status = 'pending' as any;
+      appointment.status = 'cancelled' as any;
     } else {
-      appointment.status = 'rejected' as any;
+      appointment.status = 'completed' as any;
     }
 
     appointment.notes = faker.helpers.arrayElement([

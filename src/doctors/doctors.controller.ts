@@ -24,14 +24,17 @@ export class DoctorsController {
     private readonly availabilityService: DoctorsAvailabilityService,
   ) {}
 
-  // @Post()
-  // create(@Body() createDoctorDto: CreateDoctorDto) {
-  //   return this.doctorsService.create(createDoctorDto);
-  // }
+  @Get('profile/:id')
+  profile(@Param('id') id: string) {
+    return this.doctorsService.findOne(id);
+  }
 
   @Get()
-  findAll() {
-    return this.doctorsService.findAll();
+  findAll(
+    @Query('specialization') specialization: string,
+    @Query('hospital') hospital: string,
+  ) {
+    return this.doctorsService.findAll(specialization, hospital);
   }
 
   @Get(':id')
@@ -41,7 +44,12 @@ export class DoctorsController {
     @Query('hospitalId') hospitalId?: string,
     @Query('clinicId') clinicId?: string,
   ) {
-    return this.doctorsService.findOneWithAvailableSlots(id, date, hospitalId, clinicId);
+    return this.doctorsService.findOneWithAvailableSlots(
+      id,
+      date,
+      hospitalId,
+      clinicId,
+    );
   }
 
   @Patch(':id')

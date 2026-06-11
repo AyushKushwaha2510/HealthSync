@@ -9,15 +9,18 @@ import { DoctorRegistrationRequestModule } from 'src/doctor-registration-request
 import { AdminModule } from 'src/admin/admin.module';
 import { AdminService } from 'src/admin/admin.service';
 import { Admin } from 'src/admin/entities/admin.entity';
+import { DoctorsModule } from 'src/doctors/doctors.module';
+import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { DoctorsService } from 'src/doctors/doctors.service';
 
 @Module({
   imports: [
     PatientsModule,
     DoctorRegistrationRequestModule,
-    TypeOrmModule.forFeature([User, Patient, Admin]),
+    TypeOrmModule.forFeature([User, Patient, Admin, Doctor]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, AdminService],
+  providers: [UsersService, AdminService, DoctorsService],
   exports: [UsersService],
 })
 export class UsersModule {}
