@@ -29,8 +29,6 @@ export class AppointmentsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   findAll(@Req() req) {
-    // console.log('req', req)
-    console.log('req.user', req.user);
     return this.appointmentsService.findAll(req.user);
   }
 

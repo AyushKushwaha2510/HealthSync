@@ -16,6 +16,7 @@ import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { CreateDoctorsAvailabilityDto } from 'src/doctors-availability/dto/create-doctors-availability.dto';
 import { JwtDoctorGuard } from './doctor.guard';
 import { DoctorsAvailabilityService } from 'src/doctors-availability/doctors-availability.service';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('doctors')
 export class DoctorsController {
@@ -27,6 +28,12 @@ export class DoctorsController {
   @Get('profile/:id')
   profile(@Param('id') id: string) {
     return this.doctorsService.findOne(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  myProfile(@Req() req) {
+    return this.doctorsService.myProfile(req.user.userId);
   }
 
   @Get()
@@ -68,7 +75,6 @@ export class DoctorsController {
     @Req() req,
     @Body() data: CreateDoctorsAvailabilityDto,
   ) {
-    console.log('req user', req.user);
     return this.availabilityService.create(req.user.userId, data);
   }
 }

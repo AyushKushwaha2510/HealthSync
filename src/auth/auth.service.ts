@@ -44,7 +44,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
-    console.log('req form admni', user);
+    console.log('req aa gya login ka', user);
 
     const isPasswordMatched: boolean = await bcrypt.compare(
       loginDTO.password,

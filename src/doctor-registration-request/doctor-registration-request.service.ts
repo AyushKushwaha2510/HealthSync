@@ -172,7 +172,6 @@ export class DoctorRegistrationRequestService {
 
     request.status = status;
     if (status === Status.REJECTED) {
-      console.log('rejecrt reaosnm', dto?.rejectionReason);
       if (!dto?.rejectionReason)
         throw new InternalServerErrorException('Rejection Reason is Required');
     }
@@ -180,7 +179,6 @@ export class DoctorRegistrationRequestService {
 
     const updatedRequest =
       await this.doctorRegistrationRequestRepository.save(request);
-    console.log('updated request', updatedRequest);
 
     if (status === Status.APPROVED) {
       // if approved then save user as DOCTOR
@@ -202,7 +200,7 @@ export class DoctorRegistrationRequestService {
       if (doctor) {
         // update the role of user
         doctor.user.role = Role.DOCTOR;
-        await this.userService.updateRole(doctor.user.id, Role.DOCTOR)
+        await this.userService.updateRole(doctor.user.id, Role.DOCTOR);
 
         const newDoctor = this.doctorRepository.create({
           specialization: doctor.specialization,

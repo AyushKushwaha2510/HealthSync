@@ -13,7 +13,6 @@ export class PatientsController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   findMyDetails(@Req() req) {
-    console.log('CONTROLLER HIT', req.user);
     return this.patientsService.findMyDetails(req.user.userId);
   }
 

@@ -79,10 +79,32 @@ export class DoctorsService {
   // }
 
   // ==== PROFILE ==== //
-  async profile(userId: string, doctorId: string) {
+  async profile(doctorId: string) {
     const doctor = await this.doctorRepository.findOne({
       where: {
         id: doctorId,
+      },
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!doctor) throw new NotFoundException('Doctor Not Found');
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'success',
+      data: doctor,
+    };
+  }
+
+  // ==== MY PROFILE ==== //
+  async myProfile(userId: string) {
+    const doctor = await this.doctorRepository.findOne({
+      where: {
+        user: {
+          id: userId,
+        },
       },
       relations: {
         user: true,
@@ -188,9 +210,9 @@ export class DoctorsService {
           id,
         },
       },
-      relations:{
-        user:true
-      }
+      relations: {
+        user: true,
+      },
     });
 
     if (!doctor) throw new NotFoundException('This user is not a Doctor');
@@ -211,7 +233,6 @@ export class DoctorsService {
 
   async remove(id: string) {
     const doctor = await this.doctorRepository.delete({ id });
-    console.log('delete doctor', doctor);
     if (doctor.affected == 0)
       throw new NotFoundException('Doctor not found, cannot remove');
     return `This action removes a #${id} doctor`;
