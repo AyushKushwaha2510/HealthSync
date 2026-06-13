@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Appointment, Status } from './entities/appointment.entity';
 import {
   Between,
+  In,
   LessThanOrEqual,
   MoreThan,
   MoreThanOrEqual,
@@ -123,10 +124,10 @@ export class AppointmentsService {
         },
         relations: {
           patient: {
-            user:true
+            user: true,
           },
           doctor: {
-            user:true
+            user: true,
           },
           hospital: true,
           clinic: true,
@@ -144,36 +145,52 @@ export class AppointmentsService {
     };
   }
 
-  async findAllAndCount(
-    fromDate: string,
-    toDate: string,
-    doctorId: string,
-    hospitalId: string,
-    clinicId: string,
-  ) {
-    const criteria = {
-      ...(fromDate &&
-        toDate && {
-          appointmentDateTime: Between(new Date(fromDate), new Date(toDate)),
-        }),
+  async findAllAndCount(criteria: {
+    fromDate?: string;
+    toDate?: string;
+    doctorIds?: string[];
+    hospitalIds?: string[];
+    clinicIds?: string[];
+  }) {
+    const where: any = {};
 
-      ...(fromDate &&
-        !toDate && {
-          appointmentDateTime: MoreThanOrEqual(new Date(fromDate)),
-        }),
+    if (criteria.fromDate && criteria.toDate) {
+      where.appointmentDateTime = Between(
+        new Date(criteria.fromDate),
+        new Date(criteria.toDate),
+      );
+    }
 
-      ...(!fromDate &&
-        toDate && {
-          appointmentDateTime: LessThanOrEqual(new Date(toDate)),
-        }),
+    if (criteria.doctorIds?.length) {
+      where.doctor = {
+        id: In(criteria.doctorIds),
+      };
+    }
 
-      ...(doctorId && { doctor: { id: doctorId } }),
-      ...(hospitalId && { hospital: { id: hospitalId } }),
-      ...(clinicId && { clinic: { id: clinicId } }),
-    };
+    if (criteria.hospitalIds?.length) {
+      where.hospital = {
+        id: In(criteria.hospitalIds),
+      };
+    }
+
+    if (criteria.clinicIds?.length) {
+      where.clinic = {
+        id: In(criteria.clinicIds),
+      };
+    }
+
+    where.status = In([Status.CONFIRMED, Status.PENDING_PAYMENT]);
 
     const [data, count] = await this.appointmentRepository.findAndCount({
-      where: criteria,
+      where,
+      relations: {
+        doctor: true,
+        hospital: true,
+        clinic: true,
+      },
+      order: {
+        appointmentDateTime: 'ASC',
+      },
     });
 
     return { data, count };

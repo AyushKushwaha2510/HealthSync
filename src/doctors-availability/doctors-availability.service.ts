@@ -5,11 +5,13 @@ import {
 } from '@nestjs/common';
 import { CreateDoctorsAvailabilityDto } from './dto/create-doctors-availability.dto';
 import { UpdateDoctorsAvailabilityDto } from './dto/update-doctors-availability.dto';
-import { Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import { DoctorsAvailability } from './entities/doctors-availability.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DoctorsService } from 'src/doctors/doctors.service';
 import { AppointmentsService } from 'src/appointments/appointments.service';
+import { Slot } from 'src/types/slots.type';
+import { CheckDoctorsAvailabilityDto } from './dto/check-availability.dto';
 
 @Injectable()
 export class DoctorsAvailabilityService {
@@ -33,7 +35,7 @@ export class DoctorsAvailabilityService {
     const availability = new DoctorsAvailability();
 
     availability.doctor = doctor.data;
-    availability.day = dto.day;
+    availability.weekday = dto.weekday;
     availability.startTime = dto.startTime;
     availability.endTime = dto.endTime;
     availability.slotDuration = dto.slotDuration;
@@ -52,29 +54,85 @@ export class DoctorsAvailabilityService {
     };
   }
 
-  async findAll(
-    doctorIds?: string[],
-    weekdays?: string[],
-    fromDate?: string,
-    toDate?: string,
-    timings?: string[],
-    hospitalIds?: string[],
-    clinicIds?: string[],
-  ) {
+  async availablilityInfo(dto: CheckDoctorsAvailabilityDto) {
     const criteria = {
-      ...(doctorIds && { doctorIds }),
-      ...(weekdays && { weekdays }),
-      ...(timings && { timings }),
-      ...(hospitalIds && { hospitalIds }),
-      ...(clinicIds && { clinicIds }),
+      ...(dto.doctorIds && { doctorIds: dto.doctorIds }),
+      ...(dto.weekdays && { weekdays: dto.weekdays }),
+      ...(dto.hospitalIds && { hospitalIds: dto.hospitalIds }),
+      ...(dto.clinicIds && { clinicIds: dto.clinicIds }),
+      ...(dto.fromDate && { fromDate: dto.fromDate }),
+      ...(dto.toDate && { toDate: dto.toDate }),
     };
 
-    // calculate the current appointment count of doctor in the selected hospital/clinic
-    // const currentAppointmentCount =
-    //   await this.appointmentService.findAllAndCount(doctorIds, fromDate, toDate, hospitalIds, clinicIds);
+    const where: any = {};
 
-    const availableDoctors = await this.availabilityRepository.find()
-      return`This action returns all doctorsAvailability`;
+    // if (criteria.fromDate && criteria.toDate) {
+    //   where.startTime = Between(
+    //     new Date(criteria.fromDate),
+    //     new Date(criteria.toDate),
+    //   );
+    // }
+    console.log('creitetio', criteria)
+    console.log('dto', dto)
+    if (criteria.weekdays?.length) {
+      where.weekday = In(criteria.weekdays);
+    }
+
+    if (criteria.doctorIds?.length) {
+      where.doctor = {
+        id: In(criteria.doctorIds),
+      };
+    }
+
+    if (criteria.hospitalIds?.length) {
+      where.hospital = {
+        id: In(criteria.hospitalIds),
+      };
+    }
+
+    if (criteria.clinicIds?.length) {
+      where.clinic = {
+        id: In(criteria.clinicIds),
+      };
+    }
+
+    // find the confirmed appointments for the given criterion
+    // and mark those as not available
+    const confirmedAppointments =
+      await this.appointmentService.findAllAndCount(criteria);
+
+    // generate slots
+    // all slots
+    const allSlots = await this.availabilityRepository.find({
+      where,
+      select: {
+        doctor: true,
+        hospital: true,
+        clinic: true,
+        weekday: true,
+        startTime: true,
+        endTime: true,
+      },
+      relations:{
+        doctor:true,
+        hospital: true,
+        clinic: true
+      }
+    });
+
+    // now generate available slots
+    // for each date, the unavailalbe slots are in the confirmedAppointments
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'success',
+      data: {
+        allSlots,
+        occupiedSlots: confirmedAppointments,
+      },
+    };
+
+    return `This action returns all doctorsAvailability`;
   }
 
   findOne(id: number) {

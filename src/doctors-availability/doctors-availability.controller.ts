@@ -11,6 +11,7 @@ import {
 import { DoctorsAvailabilityService } from './doctors-availability.service';
 import { CreateDoctorsAvailabilityDto } from './dto/create-doctors-availability.dto';
 import { UpdateDoctorsAvailabilityDto } from './dto/update-doctors-availability.dto';
+import { CheckDoctorsAvailabilityDto } from './dto/check-availability.dto';
 
 @Controller('doctors-availability')
 export class DoctorsAvailabilityController {
@@ -33,6 +34,11 @@ export class DoctorsAvailabilityController {
   // ) {
   //   return this.doctorsAvailabilityService.findAll(doctorName, weekDays, timings, hospitals, clinics);
   // }
+
+  @Get()
+  availablilityInfo(@Body()dto:CheckDoctorsAvailabilityDto){
+    return this.doctorsAvailabilityService.availablilityInfo(dto)
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

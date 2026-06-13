@@ -13,6 +13,7 @@ import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { FindAppointmentsDto } from './dto/find-appointment.dto';
 
 @Controller('appointments')
 export class AppointmentsController {
@@ -30,6 +31,11 @@ export class AppointmentsController {
   @UseGuards(JwtAuthGuard)
   findAll(@Req() req) {
     return this.appointmentsService.findAll(req.user);
+  }
+
+  @Post('search')
+  findAllAndCount(@Body() dto: FindAppointmentsDto) {
+    return this.appointmentsService.findAllAndCount(dto);
   }
 
   @Get(':id')
