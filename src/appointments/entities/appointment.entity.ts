@@ -26,6 +26,9 @@ export class Appointment {
   @Column({ name: 'appointment_date_time', type: 'timestamp' })
   appointmentDateTime!: Date;
 
+  @Column({ name: 'booking_date_time', type: 'timestamp' })
+  bookingDateTime!: Date;
+
   @Column({
     type: 'enum',
     enum: Status,
