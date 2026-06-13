@@ -23,7 +23,7 @@ export class DoctorsAvailability {
   doctor!: Doctor;
 
   @Column()
-  day!: WeekDays;
+  weekday!: WeekDays;
 
   @Column({ name: 'start_time', type: 'time' })
   startTime!: string;

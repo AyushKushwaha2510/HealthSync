@@ -4,7 +4,7 @@ import { WeekDays } from "src/types/week.type";
 export class CreateDoctorsAvailabilityDto {
   @IsEnum(WeekDays)
   @IsNotEmpty({ message: 'Day is required' })
-  day!: WeekDays;
+  weekday!: WeekDays;
 
   @IsString()
   @IsNotEmpty({ message: 'Start time is required' })

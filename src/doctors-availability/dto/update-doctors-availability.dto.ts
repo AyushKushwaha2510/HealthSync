@@ -8,7 +8,7 @@ export class UpdateDoctorsAvailabilityDto extends PartialType(
 ) {
   @IsEnum(WeekDays)
   @IsOptional()
-  day?: WeekDays;
+  weekday?: WeekDays;
 
   @IsString()
   @IsOptional()
