@@ -72,8 +72,8 @@ export class DoctorsAvailabilityService {
     //     new Date(criteria.toDate),
     //   );
     // }
-    console.log('creitetio', criteria)
-    console.log('dto', dto)
+    console.log('creitetio', criteria);
+    console.log('dto', dto);
     if (criteria.weekdays?.length) {
       where.weekday = In(criteria.weekdays);
     }
@@ -112,12 +112,43 @@ export class DoctorsAvailabilityService {
         weekday: true,
         startTime: true,
         endTime: true,
+        slotDuration: true,
       },
-      relations:{
-        doctor:true,
+      relations: {
+        doctor: true,
         hospital: true,
-        clinic: true
+        clinic: true,
+      },
+    });
+
+    const transformedSlots = allSlots.map((slot) => {
+      const slots: string[] = [];
+
+      let current = new Date(`1970-01-01T${slot.startTime}`);
+      const end = new Date(`1970-01-01T${slot.endTime}`);
+
+      while (current < end) {
+        const next = new Date(current);
+        next.setMinutes(next.getMinutes() + slot.slotDuration);
+
+        if (next > end) break;
+
+        slots.push(
+          `${current.toTimeString().slice(0, 5)}-${next
+            .toTimeString()
+            .slice(0, 5)}`,
+        );
+
+        current = next;
       }
+
+      return {
+        doctor: slot.doctor,
+        hospital: slot.hospital,
+        clinic: slot.clinic,
+        weekday: slot.weekday,
+        slots,
+      };
     });
 
     // now generate available slots
@@ -127,12 +158,10 @@ export class DoctorsAvailabilityService {
       statusCode: HttpStatus.OK,
       message: 'success',
       data: {
-        allSlots,
+        allSlots:transformedSlots,
         occupiedSlots: confirmedAppointments,
       },
     };
-
-    return `This action returns all doctorsAvailability`;
   }
 
   findOne(id: number) {
