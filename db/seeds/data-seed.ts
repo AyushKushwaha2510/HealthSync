@@ -190,7 +190,7 @@ export const seedData = async (manager: EntityManager): Promise<void> => {
 
       availability.doctor = doctor;
 
-      availability.day = faker.helpers.arrayElement(DAYS) as any;
+      availability.weekday = faker.helpers.arrayElement(DAYS) as any;
 
       availability.startTime = '09:00';
 
@@ -219,13 +219,19 @@ export const seedData = async (manager: EntityManager): Promise<void> => {
       from: new Date('2026-01-01'),
       to: new Date('2026-12-31'),
     });
+    appointment.bookingDateTime = faker.date.between({
+      from: new Date('2026-01-01'),
+      to: new Date('2026-12-31'),
+    });
 
     const rand = Math.random();
 
-    if (rand < 0.7) {
+    if (rand < 0.5) {
       appointment.status = 'confirmed' as any;
-    } else if (rand < 0.9) {
+    } else if (rand < 0.7) {
       appointment.status = 'cancelled' as any;
+    } else if (rand < 0.9) {
+      appointment.status = 'pending_payment' as any;
     } else {
       appointment.status = 'completed' as any;
     }
@@ -289,12 +295,12 @@ export const seedData = async (manager: EntityManager): Promise<void> => {
 };
 
 const DAYS = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
 ];
 
 export const SPECIALIZATIONS = [
