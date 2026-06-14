@@ -181,10 +181,7 @@ export class DoctorsService {
           id: hospitalId,
         },
         appointments: {
-          appointmentDateTime: Between(
-            new Date(`${date}T00:00:00`),
-            new Date(`${date}T23:59:59`),
-          ),
+          date,
         },
       },
       relations: {

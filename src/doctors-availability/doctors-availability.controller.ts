@@ -12,6 +12,7 @@ import { DoctorsAvailabilityService } from './doctors-availability.service';
 import { CreateDoctorsAvailabilityDto } from './dto/create-doctors-availability.dto';
 import { UpdateDoctorsAvailabilityDto } from './dto/update-doctors-availability.dto';
 import { CheckDoctorsAvailabilityDto } from './dto/check-availability.dto';
+import { WeekDays } from 'src/types/week.type';
 
 @Controller('doctors-availability')
 export class DoctorsAvailabilityController {
@@ -24,21 +25,29 @@ export class DoctorsAvailabilityController {
   //   return this.doctorsAvailabilityService.create(createDoctorsAvailabilityDto);
   // }
 
-  // @Get()
-  // findAll(
-  //   @Query('doctorName') doctorName?: string[],
-  //   @Query('weekdays') weekDays?: string[],
-  //   @Query('timings') timings?: string[],
-  //   @Query('hospitals') hospitals?: string[],
-  //   @Query('clinics') clinics?: string[],
-  // ) {
-  //   return this.doctorsAvailabilityService.findAll(doctorName, weekDays, timings, hospitals, clinics);
-  // }
-
   @Get()
-  availablilityInfo(@Body()dto:CheckDoctorsAvailabilityDto){
-    return this.doctorsAvailabilityService.availablilityInfo(dto)
+  findAllByDoctorId(
+    @Query('doctorId') doctorId?: string,
+    @Query('weekday') weekday?: WeekDays,
+    @Query('toDate') toDate?: string,
+    @Query('fromDate') fromDate?: string,
+    @Query('hospitalId') hospitalId?: string,
+    @Query('clinicId') clinicId?: string,
+  ) {
+    return this.doctorsAvailabilityService.availablilityInfoByDoctorId({
+      doctorId,
+      weekday,
+      toDate,
+      fromDate,
+      hospitalId,
+      clinicId,
+    });
   }
+
+  // @Get()
+  // availablilityInfo(@Body() dto: CheckDoctorsAvailabilityDto) {
+  //   return this.doctorsAvailabilityService.availablilityInfo(dto);
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

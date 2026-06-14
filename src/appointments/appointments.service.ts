@@ -148,10 +148,7 @@ export class AppointmentsService {
     const where: any = {};
 
     if (criteria.fromDate && criteria.toDate) {
-      where.appointmentDateTime = Between(
-        new Date(criteria.fromDate),
-        new Date(criteria.toDate),
-      );
+      where.date = Between(criteria.fromDate, criteria.toDate);
     }
 
     if (criteria.doctorIds?.length) {
@@ -190,6 +187,7 @@ export class AppointmentsService {
     return { data, count };
   }
 
+  // ==== FIND ALL APPOINTMENTS BY DOCTOR ID ==== //
   async findAllAndCountByDoctorId(criteria: {
     doctorId?: string;
     hospitalId?: string;
@@ -200,14 +198,7 @@ export class AppointmentsService {
     const where: any = {};
 
     if (criteria.fromDate && criteria.toDate) {
-      const from = new Date(criteria.fromDate);
-
-      const to = new Date(criteria.toDate);
-      to.setHours(23, 59, 59, 999);
-
-      console.log(from);
-      console.log(to);
-      where.appointmentDateTime = Between(from, to);
+      where.date = Between(criteria.fromDate, criteria.toDate);
     }
 
     if (criteria.doctorId) {
@@ -227,8 +218,6 @@ export class AppointmentsService {
         id: criteria.clinicId,
       };
     }
-
-    console.log('where', where);
 
     where.status = In([Status.CONFIRMED, Status.PENDING_PAYMENT]);
 
