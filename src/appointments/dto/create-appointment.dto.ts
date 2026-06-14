@@ -8,8 +8,16 @@ import {
 
 export class CreateAppointmentDto {
   @IsDateString()
-  @IsNotEmpty({ message: 'Select a date and time' })
-  appointmentDateTime!: Date;
+  @IsNotEmpty({ message: 'Select a date' })
+  appointmentDate!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Select and time' })
+  appointmentStartTime!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Select and time' })
+  appointmentEndTime!: string;
 
   @IsOptional()
   @IsString()

@@ -2,28 +2,19 @@ import {
   BadRequestException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Appointment, Status } from './entities/appointment.entity';
-import {
-  Between,
-  In,
-  LessThanOrEqual,
-  MoreThan,
-  MoreThanOrEqual,
-  Repository,
-} from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import { PatientsService } from 'src/patients/patients.service';
 import { HospitalsService } from 'src/hospitals/hospitals.service';
 import { ClinicsService } from 'src/clinics/clinics.service';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { Hospital } from 'src/hospitals/entities/hospital.entity';
 import { DoctorsService } from 'src/doctors/doctors.service';
-import { AdminService } from 'src/admin/admin.service';
 import { JwtPayloadType } from 'src/types/payload.types';
 import { Role } from 'src/users/entities/user.entity';
 
@@ -66,7 +57,9 @@ export class AppointmentsService {
 
     const appointment = new Appointment();
 
-    appointment.appointmentDateTime = dto.appointmentDateTime;
+    appointment.date = dto.appointmentDate;
+    appointment.startTime = dto.appointmentStartTime;
+    appointment.endTime = dto.appointmentEndTime;
     appointment.notes = dto.notes;
     appointment.status = Status.PENDING_PAYMENT;
     appointment.patient = patient;
@@ -189,7 +182,66 @@ export class AppointmentsService {
         clinic: true,
       },
       order: {
-        appointmentDateTime: 'ASC',
+        date: 'ASC',
+        startTime: 'ASC',
+      },
+    });
+
+    return { data, count };
+  }
+
+  async findAllAndCountByDoctorId(criteria: {
+    doctorId?: string;
+    hospitalId?: string;
+    clinicId?: string;
+    fromDate?: string;
+    toDate?: string;
+  }) {
+    const where: any = {};
+
+    if (criteria.fromDate && criteria.toDate) {
+      const from = new Date(criteria.fromDate);
+
+      const to = new Date(criteria.toDate);
+      to.setHours(23, 59, 59, 999);
+
+      console.log(from);
+      console.log(to);
+      where.appointmentDateTime = Between(from, to);
+    }
+
+    if (criteria.doctorId) {
+      where.doctor = {
+        id: criteria.doctorId,
+      };
+    }
+
+    if (criteria.hospitalId) {
+      where.hospital = {
+        id: criteria.hospitalId,
+      };
+    }
+
+    if (criteria.clinicId) {
+      where.clinic = {
+        id: criteria.clinicId,
+      };
+    }
+
+    console.log('where', where);
+
+    where.status = In([Status.CONFIRMED, Status.PENDING_PAYMENT]);
+
+    const [data, count] = await this.appointmentRepository.findAndCount({
+      where,
+      // relations: {
+      //   doctor: true,
+      //   hospital: true,
+      //   clinic: true,
+      // },
+      order: {
+        date: 'ASC',
+        startTime: 'ASC',
       },
     });
 

@@ -23,8 +23,14 @@ export class Appointment {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ name: 'appointment_date_time', type: 'timestamp' })
-  appointmentDateTime!: Date;
+  @Column({ name: 'appointment_date', type: 'date' })
+  date!: string; // 2026-06-14
+
+  @Column({ name: 'appointment_start_time', type: 'time' })
+  startTime!: string; // 10:30:00
+
+  @Column({ name: 'appointment_end_time', type: 'time' })
+  endTime!: string; // 11:00:00
 
   @Column({ name: 'booking_date_time', type: 'timestamp' })
   bookingDateTime!: Date;
