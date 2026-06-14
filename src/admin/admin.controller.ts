@@ -70,7 +70,7 @@ export class AdminController {
     return this.doctorService.findAll(specialization, hospital);
   }
 
-  @UseGuards(JwtAdminGuard)
+  // @UseGuards(JwtAdminGuard)
   @Get('all-doctors/:id')
   findDoctorById(@Param('id') id: string) {
     return this.doctorService.findOne(id);
