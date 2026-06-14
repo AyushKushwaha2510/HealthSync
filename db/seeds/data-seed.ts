@@ -205,57 +205,104 @@ export const seedData = async (manager: EntityManager): Promise<void> => {
       await manager.save(availability);
     }
   }
-  async function seedAppointment(doctors: Doctor[], patients: Patient[]) {
-    const appointment = new Appointment();
+async function seedAppointment(
+  doctors: Doctor[],
+  patients: Patient[],
+) {
+  const appointment = new Appointment();
 
-    const doctor = faker.helpers.arrayElement(doctors);
+  const doctor = faker.helpers.arrayElement(doctors);
+  const patient = faker.helpers.arrayElement(patients);
 
-    const patient = faker.helpers.arrayElement(patients);
+  appointment.doctor = doctor;
+  appointment.patient = patient;
 
-    appointment.doctor = doctor;
-    appointment.patient = patient;
+  // Random date in 2026
+  const date = faker.date.between({
+    from: new Date('2026-01-01'),
+    to: new Date('2026-12-31'),
+  });
 
-    appointment.appointmentDateTime = faker.date.between({
-      from: new Date('2026-01-01'),
-      to: new Date('2026-12-31'),
-    });
+  appointment.date = date
+    .toISOString()
+    .split('T')[0];
+
+  // Generate slot between 09:00 and 13:00
+  const slots = [
+    '09:00',
+    '09:15',
+    '09:30',
+    '09:45',
+    '10:00',
+    '10:15',
+    '10:30',
+    '10:45',
+    '11:00',
+    '11:15',
+    '11:30',
+    '11:45',
+    '12:00',
+    '12:15',
+    '12:30',
+    '12:45',
+  ];
+
+  const startTime = faker.helpers.arrayElement(slots);
+
+  const [hour, minute] = startTime
+    .split(':')
+    .map(Number);
+
+  const end = new Date();
+  end.setHours(hour, minute + 15, 0, 0);
+
+  appointment.startTime = startTime;
+  appointment.endTime = `${String(
+    end.getHours(),
+  ).padStart(2, '0')}:${String(
+    end.getMinutes(),
+  ).padStart(2, '0')}`;
+
+  const rand = Math.random();
+
+  if (rand < 0.5) {
+    appointment.status = 'confirmed' as any;
+  } else if (rand < 0.7) {
+    appointment.status = 'cancelled' as any;
+  } else if (rand < 0.9) {
+    appointment.status = 'pending_payment' as any;
+  } else {
+    appointment.status = 'completed' as any;
+  }
+
     appointment.bookingDateTime = faker.date.between({
       from: new Date('2026-01-01'),
       to: new Date('2026-12-31'),
     });
+  appointment.notes = faker.helpers.arrayElement([
+    'Regular checkup',
+    'Follow-up consultation',
+    'Chest pain',
+    'Fever and cough',
+    'Skin allergy',
+    'Migraine symptoms',
+    'Routine visit',
+  ]);
 
-    const rand = Math.random();
+  const useHospital = Math.random() < 0.6;
 
-    if (rand < 0.5) {
-      appointment.status = 'confirmed' as any;
-    } else if (rand < 0.7) {
-      appointment.status = 'cancelled' as any;
-    } else if (rand < 0.9) {
-      appointment.status = 'pending_payment' as any;
-    } else {
-      appointment.status = 'completed' as any;
-    }
-
-    appointment.notes = faker.helpers.arrayElement([
-      'Regular checkup',
-      'Follow-up consultation',
-      'Chest pain',
-      'Fever and cough',
-      'Skin allergy',
-      'Migraine symptoms',
-      'Routine visit',
-    ]);
-
-    const useHospital = Math.random() < 0.6;
-
-    if (useHospital && doctor.hospitals?.length) {
-      appointment.hospital = faker.helpers.arrayElement(doctor.hospitals);
-    } else if (doctor.clinics?.length) {
-      appointment.clinic = faker.helpers.arrayElement(doctor.clinics);
-    }
-
-    return manager.save(appointment);
+  if (useHospital && doctor.hospitals?.length) {
+    appointment.hospital = faker.helpers.arrayElement(
+      doctor.hospitals,
+    );
+  } else if (doctor.clinics?.length) {
+    appointment.clinic = faker.helpers.arrayElement(
+      doctor.clinics,
+    );
   }
+
+  return manager.save(appointment);
+}
   const hospitals: Hospital[] = [];
   const clinics: Clinic[] = [];
   const doctors: Doctor[] = [];
