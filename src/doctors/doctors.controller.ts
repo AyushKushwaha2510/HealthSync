@@ -44,6 +44,22 @@ export class DoctorsController {
     return this.doctorsService.findAll(specialization, hospital);
   }
 
+  @UseGuards(JwtDoctorGuard)
+  @Post('add-availability')
+  async addAvailability(
+    @Req() req,
+    @Body() data: CreateDoctorsAvailabilityDto,
+  ) {
+    return this.availabilityService.create(req.user.userId, data);
+  }
+
+  @UseGuards(JwtDoctorGuard)
+  @Get('view-availability')
+  async viewAvailability(@Req() req) {
+    console.log('req', req.user);
+    return this.availabilityService.findAll(req.user.userId);
+  }
+
   @Get(':id')
   findOneWithAvailableSlots(
     @Param('id') id: string,
@@ -67,14 +83,5 @@ export class DoctorsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.doctorsService.remove(id);
-  }
-
-  @UseGuards(JwtDoctorGuard)
-  @Post('add-availability')
-  async addAvailability(
-    @Req() req,
-    @Body() data: CreateDoctorsAvailabilityDto,
-  ) {
-    return this.availabilityService.create(req.user.userId, data);
   }
 }

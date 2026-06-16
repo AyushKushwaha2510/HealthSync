@@ -2,6 +2,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateDoctorsAvailabilityDto } from './dto/create-doctors-availability.dto';
 import { UpdateDoctorsAvailabilityDto } from './dto/update-doctors-availability.dto';
@@ -40,6 +41,11 @@ export class DoctorsAvailabilityService {
     availability.startTime = dto.startTime;
     availability.endTime = dto.endTime;
     availability.slotDuration = dto.slotDuration;
+    availability.clinic = dto.clinic;
+    availability.hospital = dto.hospital;
+
+    if (!dto.clinic && !dto.hospital)
+      throw new InternalServerErrorException('Clinc or Hospital is required');
 
     const newAvailability =
       await this.availabilityRepository.save(availability);
@@ -304,6 +310,35 @@ export class DoctorsAvailabilityService {
 
   findOne(id: number) {
     return `This action returns a #${id} doctorsAvailability`;
+  }
+
+  async findAll(id: string) {
+    console.log('id', id);
+    const availability = await this.availabilityRepository.find({
+      where: {
+        doctor: {
+          user: {
+            id,
+          },
+        },
+      },
+      relations: {
+        doctor: true,
+        hospital: true,
+        clinic: true,
+      },
+    });
+
+    if (!availability)
+      throw new InternalServerErrorException('Availability Not Found');
+    if (availability.length == 0)
+      throw new NotFoundException('No Availability');
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'success',
+      data: availability,
+    };
   }
 
   update(
