@@ -26,7 +26,8 @@ export class ClinicsController {
   }
 
   @Get(':doctorId')
-  findAllByDoctorId(@Param() doctorId: string) {
+  findAllByDoctorId(@Param('doctorId') doctorId: string) {
+    console.log('docorr is', doctorId)
     return this.clinicsService.findAllByDoctorId(doctorId);
   }
 

@@ -62,6 +62,7 @@ export class HospitalsService {
   }
 
   async findAllByDoctorId(doctorId: string) {
+    console.log('id aa ghuya', doctorId)
     const hospitals = await this.hospitalRepository.find({
       where: {
         doctors: {
@@ -69,14 +70,14 @@ export class HospitalsService {
         },
       },
     });
-
+console.log('hospital', hospitals)
     return {
       statusCode: HttpStatus.FOUND,
       message: 'Hospitals are Found',
       data: hospitals,
     };
   }
-  
+
   async findOne(id: string) {
     const hospital = await this.hospitalRepository.findOneBy({ id });
 
