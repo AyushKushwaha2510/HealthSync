@@ -61,9 +61,27 @@ export class ClinicsService {
     };
   }
 
+  async findAllByDoctorId(doctorId: string) {
+    const clincs = await this.clinicRepository.find({
+      where: {
+        doctors: {
+          id: doctorId,
+        },
+      },
+    });
+    if (clincs.length == 0)
+      throw new NotFoundException('No Clinic Found in DB');
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Clinics Found',
+      data: clincs,
+    };
+  }
+
   async findOne(id: string) {
     const clinic = await this.clinicRepository.findOneBy({ id });
-    
+
     return {
       statusCode: HttpStatus.FOUND,
       message: 'Clinic is Found',

@@ -8,7 +8,7 @@ import { CreateHospitalDto } from './dto/create-hospital.dto';
 import { UpdateHospitalDto } from './dto/update-hospital.dto';
 import { Hospital } from './entities/hospital.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class HospitalsService {
@@ -61,6 +61,22 @@ export class HospitalsService {
     };
   }
 
+  async findAllByDoctorId(doctorId: string) {
+    const hospitals = await this.hospitalRepository.find({
+      where: {
+        doctors: {
+          id: doctorId,
+        },
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Hospitals are Found',
+      data: hospitals,
+    };
+  }
+  
   async findOne(id: string) {
     const hospital = await this.hospitalRepository.findOneBy({ id });
 

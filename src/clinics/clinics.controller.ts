@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ClinicsService } from './clinics.service';
 import { CreateClinicDto } from './dto/create-clinic.dto';
 import { UpdateClinicDto } from './dto/update-clinic.dto';
@@ -15,6 +23,11 @@ export class ClinicsController {
   @Get()
   findAll() {
     return this.clinicsService.findAll();
+  }
+
+  @Get(':doctorId')
+  findAllByDoctorId(@Param() doctorId: string) {
+    return this.clinicsService.findAllByDoctorId(doctorId);
   }
 
   // @Get(':id')
