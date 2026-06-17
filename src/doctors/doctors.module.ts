@@ -8,12 +8,16 @@ import { User } from 'src/users/entities/user.entity';
 import { DoctorsAvailability } from 'src/doctors-availability/entities/doctors-availability.entity';
 import { DoctorsAvailabilityService } from 'src/doctors-availability/doctors-availability.service';
 import { AppointmentsModule } from 'src/appointments/appointments.module';
+import { HospitalsModule } from 'src/hospitals/hospitals.module';
+import { ClinicsModule } from 'src/clinics/clinics.module';
 
 @Module({
   imports: [
     UsersModule,
     AppointmentsModule,
     TypeOrmModule.forFeature([Doctor, User, DoctorsAvailability]),
+    HospitalsModule,
+    ClinicsModule
   ],
   controllers: [DoctorsController],
   providers: [DoctorsService, DoctorsAvailabilityService],

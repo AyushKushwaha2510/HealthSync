@@ -1,7 +1,7 @@
-import { IsEnum, IsNotEmpty, IsString, IsNumber, Min } from "class-validator";
-import { Clinic } from "src/clinics/entities/clinic.entity";
-import { Hospital } from "src/hospitals/entities/hospital.entity";
-import { WeekDays } from "src/types/week.type";
+import { IsEnum, IsNotEmpty, IsString, IsNumber, Min } from 'class-validator';
+import { Clinic } from 'src/clinics/entities/clinic.entity';
+import { Hospital } from 'src/hospitals/entities/hospital.entity';
+import { WeekDays } from 'src/types/week.type';
 
 export class CreateDoctorsAvailabilityDto {
   @IsEnum(WeekDays)
@@ -21,8 +21,8 @@ export class CreateDoctorsAvailabilityDto {
   slotDuration!: number;
 
   @IsString()
-  hospital?:Hospital;
+  hospitalId?: string;
 
   @IsString()
-  clinic?:Clinic;
+  clinicId?: string;
 }

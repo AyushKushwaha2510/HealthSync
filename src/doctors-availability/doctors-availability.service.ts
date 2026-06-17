@@ -14,6 +14,10 @@ import { AppointmentsService } from 'src/appointments/appointments.service';
 import { Slot } from 'src/types/slots.type';
 import { CheckDoctorsAvailabilityDto } from './dto/check-availability.dto';
 import { CheckDoctorsAvailabilityByDoctorIdDto } from './dto/check-availability-by-doctor-id.dto';
+import { HospitalsService } from 'src/hospitals/hospitals.service';
+import { ClinicsService } from 'src/clinics/clinics.service';
+import { Hospital } from 'src/hospitals/entities/hospital.entity';
+import { Clinic } from 'src/clinics/entities/clinic.entity';
 
 @Injectable()
 export class DoctorsAvailabilityService {
@@ -23,6 +27,8 @@ export class DoctorsAvailabilityService {
 
     private readonly doctorService: DoctorsService,
     private readonly appointmentService: AppointmentsService,
+    private readonly hospitalService: HospitalsService,
+    private readonly clinicService: ClinicsService,
   ) {}
 
   async create(userId: string, dto: CreateDoctorsAvailabilityDto) {
@@ -36,16 +42,28 @@ export class DoctorsAvailabilityService {
 
     const availability = new DoctorsAvailability();
 
+    if (!dto.clinicId && !dto.hospitalId)
+      throw new InternalServerErrorException('Clinc or Hospital is required');
+
+    if (dto.hospitalId) {
+      const hospital = (await this.hospitalService.findOne(dto.hospitalId)).data;
+      if (!hospital)
+        throw new InternalServerErrorException('Hospital not found');
+      availability.hospital = hospital;
+    }
+
+    if (dto.clinicId) {
+      const clinic = (await this.clinicService.findOne(dto.clinicId)).data;
+      if (!clinic)
+        throw new InternalServerErrorException('Clinic not found');
+      availability.clinic = clinic;
+    }
+
     availability.doctor = doctor.data;
     availability.weekday = dto.weekday;
     availability.startTime = dto.startTime;
     availability.endTime = dto.endTime;
     availability.slotDuration = dto.slotDuration;
-    availability.clinic = dto.clinic;
-    availability.hospital = dto.hospital;
-
-    if (!dto.clinic && !dto.hospital)
-      throw new InternalServerErrorException('Clinc or Hospital is required');
 
     const newAvailability =
       await this.availabilityRepository.save(availability);
