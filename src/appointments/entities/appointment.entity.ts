@@ -2,11 +2,13 @@ import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Hospital } from 'src/hospitals/entities/hospital.entity';
 import { Patient } from 'src/patients/entities/patient.entity';
+import { Payment } from 'src/payments/entities/payment.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -74,4 +76,7 @@ export class Appointment {
     nullable: true,
   })
   expiresAt?: Date;
+
+  @OneToMany(() => Payment, (payment) => payment.appointment)
+  payments?: Payment[];
 }
