@@ -48,6 +48,8 @@ export class Payment {
   })
   status!: PaymentStatus;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: 'timestamptz',
+  })
   createdAt!: Date;
 }
