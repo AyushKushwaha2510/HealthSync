@@ -12,6 +12,7 @@ import { DoctorRegistrationRequest } from 'src/doctor-registration-request/entit
 import { Hospital } from 'src/hospitals/entities/hospital.entity';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { DoctorsAvailability } from 'src/doctors-availability/entities/doctors-availability.entity';
+import { Payment } from 'src/payments/entities/payment.entity';
 
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -37,7 +38,8 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
         DoctorRegistrationRequest,
         Hospital,
         Clinic,
-        DoctorsAvailability
+        DoctorsAvailability,
+        Payment
       ],
       // synchronize: false,
       synchronize: true, // keep it false in production

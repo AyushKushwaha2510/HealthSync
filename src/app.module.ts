@@ -17,6 +17,7 @@ import { DoctorRegistrationRequestModule } from './doctor-registration-request/d
 import { AdminModule } from './admin/admin.module';
 import { ClinicsModule } from './clinics/clinics.module';
 import { DoctorsAvailabilityModule } from './doctors-availability/doctors-availability.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { DoctorsAvailabilityModule } from './doctors-availability/doctors-availa
     DoctorRegistrationRequestModule,
     AdminModule,
     ClinicsModule,
-    DoctorsAvailabilityModule
+    DoctorsAvailabilityModule,
+    PaymentsModule
   ],
   controllers: [AppController],
   providers: [AppService],
