@@ -33,13 +33,24 @@ export class Payment {
   @Column()
   currency!: string;
 
+  @Column({
+    name: 'receipt_id',
+  })
+  receiptId?: string;
+
   @Column({ enum: PaymentProvider })
   provider!: PaymentProvider; // RAZORPAY
 
-  @Column({ nullable: true })
+  @Column({
+    name: 'external_order_id',
+    nullable: true,
+  })
   externalOrderId!: string;
 
-  @Column({ nullable: true })
+  @Column({
+    name: 'external_payment_id',
+    nullable: true,
+  })
   externalPaymentId!: string;
 
   @Column({
@@ -49,6 +60,7 @@ export class Payment {
   status!: PaymentStatus;
 
   @CreateDateColumn({
+    name: 'created_at',
     type: 'timestamptz',
   })
   createdAt!: Date;
