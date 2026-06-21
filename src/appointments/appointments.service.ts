@@ -237,8 +237,16 @@ export class AppointmentsService {
     return { data, count };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} appointment`;
+  async findOne(id: string) {
+    const appointment = await this.appointmentRepository.findOneBy({ id });
+
+    if (!appointment) throw new NotFoundException('No Appointment Found');
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'success',
+      data: appointment,
+    };
   }
 
   update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
