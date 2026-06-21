@@ -1,4 +1,9 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import Razorpay from 'razorpay';
 import { ConfigService } from '@nestjs/config';
@@ -7,6 +12,7 @@ import crypto from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from './entities/payment.entity';
 import { Repository } from 'typeorm';
+import { AppointmentsService } from 'src/appointments/appointments.service';
 
 @Injectable()
 export class PaymentsService {
@@ -16,7 +22,9 @@ export class PaymentsService {
     private readonly configService: ConfigService,
 
     @InjectRepository(Payment)
-    private readonly paymentRepositoty: Repository<Payment>,
+    private readonly paymentRepository: Repository<Payment>,
+
+    private readonly appointmentService: AppointmentsService,
   ) {
     this.razorpay = new Razorpay({
       key_id: this.configService.getOrThrow<string>('razorpayKeyId'),
@@ -25,8 +33,8 @@ export class PaymentsService {
   }
 
   // === CREATE ORDER === //
-  createOrder(dto: CreatePaymentDto) {
-    const order = this.razorpay.orders.create({
+  async createOrder(dto: CreatePaymentDto) {
+    const order = await this.razorpay.orders.create({
       amount: dto.amount * 100, // rs -> paise
       currency: 'INR',
       receipt: `RCPT-${Date.now()}`,
@@ -57,11 +65,24 @@ export class PaymentsService {
       dto.externalPaymentId,
     );
 
+    // fetch appointment
+    const appointment = (
+      await this.appointmentService.findOne(dto.appointmentId)
+    ).data;
+
+    if (!appointment)
+      throw new InternalServerErrorException(
+        'An Error Occured While Fetching Appointment Details',
+      );
+
     // save the info of payment
     const payment = new Payment();
     payment.amount = Number(paymentDetails.amount);
     payment.currency = paymentDetails.currency;
     payment.receiptId = paymentDetails.receipt;
+    payment.appointment = appointment;
+
+    await this.paymentRepository.save(payment);
 
     return {
       statusCode: HttpStatus.OK,
@@ -69,6 +90,8 @@ export class PaymentsService {
       data: true,
     };
   }
+
+  // === START PAYMENT === //
 
   findAll() {
     return `This action returns all payments`;

@@ -1,14 +1,20 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
+import { VerifyPaymentDto } from './dto/verify-payment.dto';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Post()
+  @Post('create-order')
   createOrder(@Body() createPaymentDto: CreatePaymentDto) {
     return this.paymentsService.createOrder(createPaymentDto);
+  }
+
+  @Post('verify-signature')
+  verifySignature(@Body() verifyPaymentDto: VerifyPaymentDto) {
+    return this.paymentsService.verifySignature(verifyPaymentDto);
   }
 
   @Get()
