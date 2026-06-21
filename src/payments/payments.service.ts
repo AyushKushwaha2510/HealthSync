@@ -1,6 +1,5 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
 import Razorpay from 'razorpay';
 import { ConfigService } from '@nestjs/config';
 import { VerifyPaymentDto } from './dto/verify-payment.dto';
@@ -79,9 +78,9 @@ export class PaymentsService {
     return `This action returns a #${id} payment`;
   }
 
-  update(id: number, updatePaymentDto: UpdatePaymentDto) {
-    return `This action updates a #${id} payment`;
-  }
+  // update(id: number, updatePaymentDto: UpdatePaymentDto) {
+  //   return `This action updates a #${id} payment`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} payment`;
