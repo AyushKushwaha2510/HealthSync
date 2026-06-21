@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 
 export class VerifyPaymentDto {
   @IsString()
@@ -9,4 +9,7 @@ export class VerifyPaymentDto {
 
   @IsString()
   externalSignature!: string;
+
+  @IsUUID()
+  appointmentId!: string;
 }
