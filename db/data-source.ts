@@ -29,6 +29,11 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
       database: configService.get<string>('dbName'),
       password: configService.get<string>('dbPassword'),
       // entities: ["dist/**/*.entity.js"],
+
+      ssl: {
+        rejectUnauthorized: false,
+      },
+      
       entities: [
         User,
         Patient,
@@ -39,8 +44,9 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
         Hospital,
         Clinic,
         DoctorsAvailability,
-        Payment
+        Payment,
       ],
+
       // synchronize: false,
       synchronize: true, // keep it false in production
       migrations: ['dist/db/migrations/*.js'],
