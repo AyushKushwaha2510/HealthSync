@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateDoctorRegistrationRequestDto } from './create-doctor-registration-request.dto';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Status } from '../entities/doctor-registration-request.entity';
 
 export class UpdateDoctorRegistrationRequestDto extends PartialType(
@@ -11,4 +11,9 @@ export class UpdateDoctorRegistrationRequestDto extends PartialType(
 
   @IsString({ message: 'Rejection Reason Required' })
   readonly rejectionReason?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  readonly appointmentFees?: number;
 }

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsInt, IsOptional, IsString, IsUUID, Min} from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min} from 'class-validator';
 
 export class CreateDoctorDto {
   @IsString()
@@ -22,4 +22,9 @@ export class CreateDoctorDto {
 
   @IsString()
   readonly licenseNumber!: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @Min(0)
+  readonly appointmentFees!: number;
 }

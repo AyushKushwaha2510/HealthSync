@@ -46,6 +46,12 @@ export class DoctorRegistrationRequest {
   @JoinTable()
   clinics?: Clinic[];
 
+  @Column({
+    name: 'appointment-fees',
+    type: 'int',
+  })
+  appointmentFees!: number;
+
   // each doctor will have only one user profile
   @OneToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'user_id' })
