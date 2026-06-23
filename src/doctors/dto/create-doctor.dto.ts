@@ -26,5 +26,5 @@ export class CreateDoctorDto {
   @IsNumber()
   @IsNotEmpty()
   @Min(0)
-  readonly appointmentFees!: number;
+  readonly appointmentFee!: number;
 }

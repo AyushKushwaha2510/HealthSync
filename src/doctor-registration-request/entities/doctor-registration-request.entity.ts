@@ -47,10 +47,10 @@ export class DoctorRegistrationRequest {
   clinics?: Clinic[];
 
   @Column({
-    name: 'appointment-fees',
+    name: 'appointment-fee',
     type: 'int',
   })
-  appointmentFees!: number;
+  appointmentFee!: number;
 
   // each doctor will have only one user profile
   @OneToOne(() => User, { nullable: false })

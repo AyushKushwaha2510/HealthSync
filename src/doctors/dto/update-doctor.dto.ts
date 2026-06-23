@@ -23,5 +23,5 @@ export class UpdateDoctorDto extends PartialType(CreateDoctorDto) {
   @IsNumber()
   @IsOptional()
   @Min(0)
-  readonly appointmentFees?: number;
+  readonly appointmentFee?: number;
 }

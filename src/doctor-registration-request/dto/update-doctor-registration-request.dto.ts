@@ -15,5 +15,5 @@ export class UpdateDoctorRegistrationRequestDto extends PartialType(
   @IsNumber()
   @IsOptional()
   @Min(0)
-  readonly appointmentFees?: number;
+  readonly appointmentFee?: number;
 }
