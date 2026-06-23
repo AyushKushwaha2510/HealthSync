@@ -100,6 +100,8 @@ export class DoctorRegistrationRequestService {
       createDoctorRegistrationRequestDto.licenseNumber;
     doctorRequest.user = user;
     doctorRequest.status = Status.PENDING;
+    doctorRequest.appointmentFees =
+      createDoctorRegistrationRequestDto.appointmentFees;
 
     const newDoctorRequest =
       await this.doctorRegistrationRequestRepository.save(doctorRequest);
@@ -209,6 +211,7 @@ export class DoctorRegistrationRequestService {
           user: doctor.user,
           hospitals: doctor.hospitals,
           clinics: doctor.clinics,
+          appointmentFees: doctor.appointmentFees,
         });
         await this.doctorRepository.save(newDoctor);
       }

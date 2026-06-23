@@ -3,6 +3,7 @@ import {
   IsArray,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -33,4 +34,9 @@ export class CreateDoctorRegistrationRequestDto {
   @IsString()
   @IsNotEmpty({ message: 'License Number is Required' })
   readonly licenseNumber!: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @Min(0)
+  readonly appointmentFees!: number;
 }
