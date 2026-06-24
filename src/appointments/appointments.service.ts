@@ -60,6 +60,7 @@ export class AppointmentsService {
     appointment.date = dto.appointmentDate;
     appointment.startTime = dto.appointmentStartTime;
     appointment.endTime = dto.appointmentEndTime;
+    appointment.bookingDateTime = new Date(Date.now());
     appointment.notes = dto.notes;
     appointment.status = Status.PENDING_PAYMENT;
     appointment.patient = patient;

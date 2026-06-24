@@ -20,7 +20,11 @@ export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
 
   @Post()
-  create(@Body() createAppointmentDto: CreateAppointmentDto, @Req() req) {
+  @UseGuards(JwtAuthGuard)
+  create(
+    @Req() req, 
+    @Body() createAppointmentDto: CreateAppointmentDto
+  ) {
     return this.appointmentsService.create(
       req.user.userId,
       createAppointmentDto,
