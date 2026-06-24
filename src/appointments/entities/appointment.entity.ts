@@ -75,7 +75,7 @@ export class Appointment {
     type: 'timestamp',
     nullable: true,
   })
-  expiresAt?: Date;
+  expiresAt!: Date;
 
   @OneToMany(() => Payment, (payment) => payment.appointment)
   payments?: Payment[];
