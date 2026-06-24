@@ -37,7 +37,7 @@ export class AppointmentsService {
 
     if (!patient) throw new NotFoundException('Patient not found');
 
-    const { data: doctor } = await this.doctorService.findOneByUserId(
+    const { data: doctor } = await this.doctorService.findOneByDoctorId(
       dto.doctorId,
     );
     if (!doctor) throw new BadRequestException('Please select a doctor');

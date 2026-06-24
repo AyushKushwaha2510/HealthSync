@@ -221,6 +221,25 @@ export class DoctorsService {
     };
   }
 
+  async findOneByDoctorId(id: string) {
+    const doctor = await this.doctorRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!doctor) throw new NotFoundException('Doctor Not Found');
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'Doctor is Found',
+      data: doctor,
+    };
+  }
+
   // TODO: make a findOne, for patient,
   // patient will also get same info as admin but only data of available appointments
 
