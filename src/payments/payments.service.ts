@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  GatewayTimeoutException,
   HttpStatus,
   Injectable,
   InternalServerErrorException,
@@ -13,6 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from './entities/payment.entity';
 import { Repository } from 'typeorm';
 import { AppointmentsService } from 'src/appointments/appointments.service';
+import { Status } from 'src/appointments/entities/appointment.entity';
 
 @Injectable()
 export class PaymentsService {
@@ -69,6 +71,15 @@ export class PaymentsService {
     const appointment = (
       await this.appointmentService.findOne(dto.appointmentId)
     ).data;
+
+    if (appointment.expiresAt > new Date(Date.now()))
+      appointment.status = Status.CONFIRMED;
+    else {
+      appointment.status = Status.EXPIRED;
+      throw new GatewayTimeoutException(
+        'Payment Time Out, Please Try Again!'
+      );
+    }
 
     if (!appointment)
       throw new InternalServerErrorException(
