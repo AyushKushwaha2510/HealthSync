@@ -38,7 +38,10 @@ export class Payment {
   })
   receiptId?: string;
 
-  @Column({ enum: PaymentProvider })
+  @Column({
+    enum: PaymentProvider,
+    nullable: true,
+  })
   provider!: PaymentProvider; // RAZORPAY
 
   @Column({
