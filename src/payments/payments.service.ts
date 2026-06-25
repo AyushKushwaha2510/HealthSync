@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { VerifyPaymentDto } from './dto/verify-payment.dto';
 import crypto from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Payment } from './entities/payment.entity';
+import { Payment, PaymentStatus } from './entities/payment.entity';
 import { Repository } from 'typeorm';
 import { AppointmentsService } from 'src/appointments/appointments.service';
 import { Status } from 'src/appointments/entities/appointment.entity';
@@ -63,8 +63,11 @@ export class PaymentsService {
       throw new BadRequestException('Invalid payment signature');
     }
 
-    const paymentDetails = await this.razorpay.orders.fetch(
+    const paymentDetails = await this.razorpay.payments.fetch(
       dto.externalPaymentId,
+    );
+    const orderDetails = await this.razorpay.orders.fetch(
+      dto.externalOrderId,
     );
 
     // fetch appointment
@@ -81,7 +84,8 @@ export class PaymentsService {
       await this.appointmentService.update(dto.appointmentId, {
         status: Status.CONFIRMED,
       });
-    } else { // TODO: this doesn't refunds the payment, if fails refund the payment
+    } else {
+      // TODO: this doesn't refunds the payment, if fails refund the payment
       await this.appointmentService.update(dto.appointmentId, {
         status: Status.EXPIRED,
       });
@@ -90,21 +94,30 @@ export class PaymentsService {
 
     // save the info of payment
     const payment = new Payment();
-    payment.amount = Number(paymentDetails.amount);
+    payment.amount = Number(paymentDetails.amount) / 100; // paise -> rs
     payment.currency = paymentDetails.currency;
-    payment.receiptId = paymentDetails.receipt;
+    payment.receiptId = orderDetails.receipt;
     payment.appointment = appointment;
+    payment.externalOrderId = dto.externalOrderId;
+    payment.externalPaymentId = dto.externalPaymentId;
+    
+    if (paymentDetails.status === 'created')
+      payment.status = PaymentStatus.PENDING;
+    if (paymentDetails.status === 'failed')
+      payment.status = PaymentStatus.FAILED;
+    if (orderDetails.status === 'paid') 
+      payment.status = PaymentStatus.PAID;
+    if (paymentDetails.status === 'refunded') 
+      payment.status = PaymentStatus.REFUNDED;
 
-    await this.paymentRepository.save(payment);
-
+    const newPayment = await this.paymentRepository.save(payment);
+    console.log('paymeny', newPayment);
     return {
       statusCode: HttpStatus.OK,
       message: 'success',
       data: true,
     };
   }
-
-  // === START PAYMENT === //
 
   findAll() {
     return `This action returns all payments`;
