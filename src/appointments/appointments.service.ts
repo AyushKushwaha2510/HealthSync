@@ -250,8 +250,8 @@ export class AppointmentsService {
     };
   }
 
-  update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
-    return `This action updates a #${id} appointment`;
+  async update(id: string, updateAppointmentDto: UpdateAppointmentDto) {
+    return this.appointmentRepository.update(id, updateAppointmentDto)
   }
 
   remove(id: number) {

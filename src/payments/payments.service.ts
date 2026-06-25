@@ -72,19 +72,21 @@ export class PaymentsService {
       await this.appointmentService.findOne(dto.appointmentId)
     ).data;
 
-    if (appointment.expiresAt > new Date(Date.now()))
-      appointment.status = Status.CONFIRMED;
-    else {
-      appointment.status = Status.EXPIRED;
-      throw new GatewayTimeoutException(
-        'Payment Time Out, Please Try Again!'
-      );
-    }
-
     if (!appointment)
       throw new InternalServerErrorException(
         'An Error Occured While Fetching Appointment Details',
       );
+
+    if (appointment.expiresAt > new Date(Date.now())) {
+      await this.appointmentService.update(dto.appointmentId, {
+        status: Status.CONFIRMED,
+      });
+    } else { // TODO: this doesn't refunds the payment, if fails refund the payment
+      await this.appointmentService.update(dto.appointmentId, {
+        status: Status.EXPIRED,
+      });
+      throw new GatewayTimeoutException('Payment Time Out, Please Try Again!');
+    }
 
     // save the info of payment
     const payment = new Payment();
