@@ -250,8 +250,29 @@ export class AppointmentsService {
     };
   }
 
+  async findOneWithDetails(id: string) {
+    const appointment = await this.appointmentRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        patient: {
+          user:true
+        },
+      },
+    });
+
+    if (!appointment) throw new NotFoundException('No Appointment Found');
+
+    return {
+      statusCode: HttpStatus.FOUND,
+      message: 'success',
+      data: appointment,
+    };
+  }
+
   async update(id: string, updateAppointmentDto: UpdateAppointmentDto) {
-    return this.appointmentRepository.update(id, updateAppointmentDto)
+    return this.appointmentRepository.update(id, updateAppointmentDto);
   }
 
   remove(id: number) {
