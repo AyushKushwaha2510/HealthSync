@@ -18,6 +18,7 @@ import { AdminModule } from './admin/admin.module';
 import { ClinicsModule } from './clinics/clinics.module';
 import { DoctorsAvailabilityModule } from './doctors-availability/doctors-availability.module';
 import { PaymentsModule } from './payments/payments.module';
+import { PrescriptionModule } from './prescription/prescription.module';
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { PaymentsModule } from './payments/payments.module';
     AdminModule,
     ClinicsModule,
     DoctorsAvailabilityModule,
-    PaymentsModule
+    PaymentsModule,
+    PrescriptionModule
   ],
   controllers: [AppController],
   providers: [AppService],

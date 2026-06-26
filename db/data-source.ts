@@ -13,6 +13,7 @@ import { Hospital } from 'src/hospitals/entities/hospital.entity';
 import { Clinic } from 'src/clinics/entities/clinic.entity';
 import { DoctorsAvailability } from 'src/doctors-availability/entities/doctors-availability.entity';
 import { Payment } from 'src/payments/entities/payment.entity';
+import { Prescription } from 'src/prescription/entities/prescription.entity';
 
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -29,11 +30,6 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
       database: configService.get<string>('dbName'),
       password: configService.get<string>('dbPassword'),
       // entities: ["dist/**/*.entity.js"],
-
-      ssl: {
-        rejectUnauthorized: false,
-      },
-      
       entities: [
         User,
         Patient,
@@ -45,8 +41,8 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
         Clinic,
         DoctorsAvailability,
         Payment,
+        Prescription
       ],
-
       // synchronize: false,
       synchronize: true, // keep it false in production
       migrations: ['dist/db/migrations/*.js'],
