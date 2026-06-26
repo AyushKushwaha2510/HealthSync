@@ -1,4 +1,4 @@
-import { Address } from 'src/address/entity/address.entity';
+import { Address } from 'src/embedded-entities/address/entity/address.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { DoctorsAvailability } from 'src/doctors-availability/entities/doctors-availability.entity';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
