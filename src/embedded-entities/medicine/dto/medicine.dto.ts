@@ -10,6 +10,14 @@ export class MedicineInfoDto {
   readonly dosage!: string;
 
   @IsString()
+  @IsNotEmpty()
+  readonly frequency!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly duration!: string;
+
+  @IsString()
   @IsOptional()
   readonly note?: string;
 }
