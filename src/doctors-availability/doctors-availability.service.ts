@@ -207,8 +207,6 @@ export class DoctorsAvailabilityService {
     //     new Date(criteria.toDate),
     //   );
     // }
-    console.log('creitetio', criteria);
-    console.log('dto', dto);
 
     if (criteria.weekday) {
       where.weekday = criteria.weekday;
@@ -331,7 +329,6 @@ export class DoctorsAvailabilityService {
   }
 
   async findAll(id: string) {
-    console.log('id', id);
     const availability = await this.availabilityRepository.find({
       where: {
         doctor: {

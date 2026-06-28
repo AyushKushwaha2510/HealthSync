@@ -111,7 +111,7 @@ export class PaymentsService {
       payment.status = PaymentStatus.REFUNDED;
 
     const newPayment = await this.paymentRepository.save(payment);
-    console.log('paymeny', newPayment);
+
     return {
       statusCode: HttpStatus.OK,
       message: 'success',

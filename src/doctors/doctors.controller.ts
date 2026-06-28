@@ -56,7 +56,6 @@ export class DoctorsController {
   @UseGuards(JwtDoctorGuard)
   @Get('view-availability')
   async viewAvailability(@Req() req) {
-    console.log('req', req.user);
     return this.availabilityService.findAll(req.user.userId);
   }
 
