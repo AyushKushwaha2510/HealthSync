@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -35,6 +36,20 @@ export class PrescriptionService {
         'Prescription must belong to an appointment',
       );
 
+    // check for existing prescription
+    const existingPrescription = await this.prescriptionRepository.findOne({
+      where: {
+        appointment: {
+          id: createPrescriptionDto.appointmentId,
+        },
+      },
+    });
+
+    if (existingPrescription)
+      throw new InternalServerErrorException(
+        'Prescription already added to this appointment, cannot add a new one',
+      );
+
     // create prescription object
     const prescription = {
       appointment,
@@ -48,6 +63,11 @@ export class PrescriptionService {
       throw new InternalServerErrorException(
         'Unable to add prescription. Please try again',
       );
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Prescription Added Successfully',
+    };
   }
 
   async findAll(doctorId?: string, patientId?: string, user?: JwtPayloadType) {
@@ -56,7 +76,8 @@ export class PrescriptionService {
       ...(patientId && { patientId }),
     };
 
-    if (user?.role === Role.PATIENT) { // Patient can only see their prescriptions
+    if (user?.role === Role.PATIENT) {
+      // Patient can only see their prescriptions
       const patient = await this.patientService.findOne(user?.userId);
       criteria.patientId = patient.data?.id;
     }
@@ -70,6 +91,16 @@ export class PrescriptionService {
           patient: {
             id: criteria.patientId,
           },
+        },
+      },
+      relations: {
+        appointment: true,
+      },
+      select: {
+        id: true,
+        notes: true,
+        appointment: {
+          date: true,
         },
       },
     });
