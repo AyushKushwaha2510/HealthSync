@@ -18,15 +18,15 @@ import { AdminModule } from './admin/admin.module';
 import { ClinicsModule } from './clinics/clinics.module';
 import { DoctorsAvailabilityModule } from './doctors-availability/doctors-availability.module';
 import { PaymentsModule } from './payments/payments.module';
-import { PrescriptionModule } from './prescription/prescription.module';
+import { PrescriptionModule } from './prescriptions/prescriptions.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath:['.env.development', '.env.production'],
-      isGlobal:true,
-      load:[configuration],
-      validate:validate
+      envFilePath: ['.env.development', '.env.production'],
+      isGlobal: true,
+      load: [configuration],
+      validate: validate,
     }),
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     UsersModule,
@@ -41,7 +41,7 @@ import { PrescriptionModule } from './prescription/prescription.module';
     ClinicsModule,
     DoctorsAvailabilityModule,
     PaymentsModule,
-    PrescriptionModule
+    PrescriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
