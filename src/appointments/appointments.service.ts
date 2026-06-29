@@ -257,13 +257,14 @@ export class AppointmentsService {
       },
       relations: {
         patient: {
-          user:true
+          user: true,
         },
+        prescription: true,
       },
     });
 
     if (!appointment) throw new NotFoundException('No Appointment Found');
-
+    console.log("appointment", appointment)
     return {
       statusCode: HttpStatus.FOUND,
       message: 'success',

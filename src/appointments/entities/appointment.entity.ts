@@ -3,7 +3,7 @@ import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { Hospital } from 'src/hospitals/entities/hospital.entity';
 import { Patient } from 'src/patients/entities/patient.entity';
 import { Payment } from 'src/payments/entities/payment.entity';
-import { Prescription } from 'src/prescription/entities/prescription.entity';
+import { Prescription } from 'src/prescriptions/entities/prescriptions.entity';
 import {
   Column,
   Entity,
