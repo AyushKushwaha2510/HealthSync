@@ -14,7 +14,7 @@ export class Prescription {
   id!: string;
 
   @OneToOne(() => Appointment, (appointment) => appointment.prescription)
-  @JoinColumn()
+  @JoinColumn({ name: 'appointment_id' })
   appointment!: Appointment;
 
   @Column({ type: 'jsonb' })
