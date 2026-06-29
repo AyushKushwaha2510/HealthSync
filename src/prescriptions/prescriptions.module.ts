@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { PrescriptionService } from './prescription.service';
-import { PrescriptionController } from './prescription.controller';
+import { PrescriptionService } from './prescriptions.service';
+import { PrescriptionController } from './prescriptions.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Prescription } from './entities/prescription.entity';
+import { Prescription } from './entities/prescriptions.entity';
 import { AppointmentsModule } from 'src/appointments/appointments.module';
 import { PatientsModule } from 'src/patients/patients.module';
 

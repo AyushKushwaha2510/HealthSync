@@ -1,7 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req } from '@nestjs/common';
-import { PrescriptionService } from './prescription.service';
-import { CreatePrescriptionDto } from './dto/create-prescription.dto';
-import { UpdatePrescriptionDto } from './dto/update-prescription.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  Req,
+} from '@nestjs/common';
+import { PrescriptionService } from './prescriptions.service';
+import { CreatePrescriptionDto } from './dto/create-prescriptions.dto';
+import { UpdatePrescriptionDto } from './dto/update-prescriptions.dto';
 import { JwtDoctorGuard } from 'src/doctors/doctor.guard';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
@@ -12,6 +23,7 @@ export class PrescriptionController {
   @Post()
   @UseGuards(JwtDoctorGuard)
   create(@Body() createPrescriptionDto: CreatePrescriptionDto) {
+    console.log('req aa gya backend me', createPrescriptionDto);
     return this.prescriptionService.create(createPrescriptionDto);
   }
 
@@ -35,6 +47,7 @@ export class PrescriptionController {
     @Param('id') id: string,
     @Body() updatePrescriptionDto: UpdatePrescriptionDto,
   ) {
+    console.log("update ka req", updatePrescriptionDto, id)
     return this.prescriptionService.update(id, updatePrescriptionDto);
   }
 

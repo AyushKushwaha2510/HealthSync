@@ -5,9 +5,9 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreatePrescriptionDto } from './dto/create-prescription.dto';
-import { UpdatePrescriptionDto } from './dto/update-prescription.dto';
-import { Prescription } from './entities/prescription.entity';
+import { CreatePrescriptionDto } from './dto/create-prescriptions.dto';
+import { UpdatePrescriptionDto } from './dto/update-prescriptions.dto';
+import { Prescription } from './entities/prescriptions.entity';
 import { AppointmentsService } from 'src/appointments/appointments.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
