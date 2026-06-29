@@ -25,5 +25,15 @@ export class CreatePrescriptionDto {
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
+  readonly symptoms?: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  readonly diseases?: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
   readonly notes?: string[];
 }
