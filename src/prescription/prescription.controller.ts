@@ -5,7 +5,7 @@ import { UpdatePrescriptionDto } from './dto/update-prescription.dto';
 import { JwtDoctorGuard } from 'src/doctors/doctor.guard';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
-@Controller('prescription')
+@Controller('prescriptions')
 export class PrescriptionController {
   constructor(private readonly prescriptionService: PrescriptionService) {}
 
