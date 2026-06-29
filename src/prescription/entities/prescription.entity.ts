@@ -1,6 +1,12 @@
 import { Appointment } from 'src/appointments/entities/appointment.entity';
 import { MedicineInfo } from 'src/embedded-entities/medicine/entities/medicine.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('prescriptions')
 export class Prescription {
@@ -13,6 +19,12 @@ export class Prescription {
 
   @Column({ type: 'jsonb' })
   medicines!: MedicineInfo[];
+
+  @Column({ type: 'text', array: true, nullable: true })
+  symptoms?: string[];
+
+  @Column({ type: 'text', array: true, nullable: true })
+  diseases?: string[];
 
   @Column({ type: 'text', array: true, nullable: true })
   notes?: string[];
