@@ -39,7 +39,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   logout(@Res({ passthrough: true }) res) {
-    console.log("logout req", res)
     // clear cookie
     res.clearCookie('accessToken', {
       httpOnly: true,
