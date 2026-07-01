@@ -23,7 +23,6 @@ export class PrescriptionController {
   @Post()
   @UseGuards(JwtDoctorGuard)
   create(@Body() createPrescriptionDto: CreatePrescriptionDto) {
-    console.log('req aa gya backend me', createPrescriptionDto);
     return this.prescriptionService.create(createPrescriptionDto);
   }
 
@@ -47,7 +46,6 @@ export class PrescriptionController {
     @Param('id') id: string,
     @Body() updatePrescriptionDto: UpdatePrescriptionDto,
   ) {
-    console.log("update ka req", updatePrescriptionDto, id)
     return this.prescriptionService.update(id, updatePrescriptionDto);
   }
 
