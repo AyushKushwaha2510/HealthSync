@@ -43,6 +43,9 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
         Payment,
         Prescription,
       ],
+      ssl: {
+        rejectUnauthorized: false,
+      },
       // synchronize: false,
       synchronize: true, // keep it false in production
       migrations: ['dist/db/migrations/*.js'],
