@@ -30,10 +30,10 @@ export class PrescriptionController {
   @UseGuards(JwtAuthGuard)
   findAll(
     @Req() req,
-    @Query('patientId') patientId: string,
     @Query('doctorId') doctorId: string,
+    @Query('patientId') patientId: string,
   ) {
-    return this.prescriptionService.findAll(patientId, doctorId, req.user);
+    return this.prescriptionService.findAll(doctorId, patientId, req.user);
   }
 
   @Get(':id')

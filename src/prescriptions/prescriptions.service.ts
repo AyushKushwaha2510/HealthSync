@@ -101,6 +101,7 @@ export class PrescriptionService {
         notes: true,
         appointment: {
           date: true,
+          startTime: true
         },
       },
     });
