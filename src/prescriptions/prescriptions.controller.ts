@@ -9,6 +9,7 @@ import {
   UseGuards,
   Query,
   Req,
+  Res,
 } from '@nestjs/common';
 import { PrescriptionService } from './prescriptions.service';
 import { CreatePrescriptionDto } from './dto/create-prescriptions.dto';
@@ -52,5 +53,13 @@ export class PrescriptionController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.prescriptionService.remove(id);
+  }
+
+  @Get('download/:id/pdf')
+  download(
+    @Param('id') id: string, 
+    @Res() res
+  ) {
+    return this.prescriptionService.download(id, res);
   }
 }
