@@ -262,6 +262,8 @@ export class AppointmentsService {
         doctor: {
           user: true,
         },
+        clinic: true,
+        hospital: true,
         prescription: true,
       },
     });
