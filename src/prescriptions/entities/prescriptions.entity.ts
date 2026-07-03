@@ -24,6 +24,9 @@ export class Prescription {
   symptoms?: string[];
 
   @Column({ type: 'text', array: true, nullable: true })
+  diagnosis?: string[];
+
+  @Column({ type: 'text', array: true, nullable: true })
   diseases?: string[];
 
   @Column({ type: 'text', array: true, nullable: true })
