@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { CreateAdminDto } from 'src/admin/dto/create-admin.dto';
 import { AdminService } from 'src/admin/admin.service';
 import { JwtAuthGuard } from './jwt.guard';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
@@ -13,6 +14,7 @@ export class AuthController {
     private readonly userService: UsersService,
     private readonly authService: AuthService,
     private readonly adminService: AdminService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post('register') // default register as patient
@@ -26,7 +28,7 @@ export class AuthController {
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.getOrThrow<string>('nodeENV') === 'production',
       sameSite: 'none',
       maxAge: 1 * 24 * 60 * 60 * 1000, // 1-day
     });
