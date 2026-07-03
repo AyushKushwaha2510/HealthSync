@@ -137,9 +137,20 @@ export class PrescriptionService {
 
     const prescription = appointment.prescription;
 
-    
+    // Create PDF document
     // ======= Init doc with Roboto Font ========
     const doc = new PDFDocument({
+      size: 'A4',
+      margin: 50,
+      info: {
+        Title: `Prescription-${appointmentId}`,
+        Author:
+          appointment.doctor.user.firstName +
+          ' ' +
+          appointment.doctor.user.lastName,
+        Subject: 'Medical Prescription',
+        Keywords: 'prescription, medical, health',
+      },
       font: path.join(
         process.cwd(),
         'public/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf',
