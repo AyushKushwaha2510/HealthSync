@@ -1,0 +1,26 @@
+import { Appointment } from 'src/features/appointments/entities/appointment.entity';
+import { User } from 'src/features/users/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+@Entity('patients')
+export class Patient {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
+
+  @OneToMany(() => Appointment, (appointment) => appointment.patient)
+  appointments?: Appointment[];
+
+  @Column({ nullable: true })
+  disease?: string;
+}

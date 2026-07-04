@@ -1,7 +1,7 @@
-import { Role } from "src/users/entities/user.entity";
+import { Role } from 'src/features/users/entities/user.entity';
 
 export interface JwtPayloadType {
-    email: string;
-    userId: string;
-    role:Role
+  email: string;
+  userId: string;
+  role: Role;
 }

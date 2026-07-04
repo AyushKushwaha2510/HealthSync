@@ -1,24 +1,24 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './features/users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 import { validate } from 'env-validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmAsyncConfig } from 'db/data-source';
-import { PatientsModule } from './patients/patients.module';
-import { DoctorsModule } from './doctors/doctors.module';
-import { HospitalsModule } from './hospitals/hospitals.module';
-import { AppointmentsModule } from './appointments/appointments.module';
-import { AuthModule } from './auth/auth.module';
+import { PatientsModule } from './features/patients/patients.module';
+import { DoctorsModule } from './features/doctors/doctors.module';
+import { HospitalsModule } from './features/hospitals/hospitals.module';
+import { AppointmentsModule } from './features/appointments/appointments.module';
+import { AuthModule } from './features/auth/auth.module';
 import { SeedModule } from './seed/seed.module';
-import { DoctorRegistrationRequestModule } from './doctor-registration-request/doctor-registration-request.module';
-import { AdminModule } from './admin/admin.module';
-import { ClinicsModule } from './clinics/clinics.module';
-import { DoctorsAvailabilityModule } from './doctors-availability/doctors-availability.module';
-import { PaymentsModule } from './payments/payments.module';
-import { PrescriptionModule } from './prescriptions/prescriptions.module';
+import { DoctorRegistrationRequestModule } from './features/doctor-registration-request/doctor-registration-request.module';
+import { AdminModule } from './features/admin/admin.module';
+import { ClinicsModule } from './features/clinics/clinics.module';
+import { DoctorsAvailabilityModule } from './features/doctors-availability/doctors-availability.module';
+import { PaymentsModule } from './features/payments/payments.module';
+import { PrescriptionModule } from './features/prescriptions/prescriptions.module';
 
 @Module({
   imports: [
