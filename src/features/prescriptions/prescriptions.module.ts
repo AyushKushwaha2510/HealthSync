@@ -14,5 +14,6 @@ import { PatientsModule } from 'src/features/patients/patients.module';
   ],
   controllers: [PrescriptionController],
   providers: [PrescriptionService],
+  exports: [PrescriptionService],
 })
 export class PrescriptionModule {}
