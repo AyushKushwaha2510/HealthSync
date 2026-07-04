@@ -19,6 +19,7 @@ import { ClinicsModule } from './features/clinics/clinics.module';
 import { DoctorsAvailabilityModule } from './features/doctors-availability/doctors-availability.module';
 import { PaymentsModule } from './features/payments/payments.module';
 import { PrescriptionModule } from './features/prescriptions/prescriptions.module';
+import { AiModule } from './features/ai/ai.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { PrescriptionModule } from './features/prescriptions/prescriptions.modul
     DoctorsAvailabilityModule,
     PaymentsModule,
     PrescriptionModule,
+    AiModule
   ],
   controllers: [AppController],
   providers: [AppService],
