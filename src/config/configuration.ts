@@ -12,4 +12,6 @@ export default () => ({
   razorpayKeySecret: process.env.RAZORPAY_KEY_SECRET,
 
   nodeENV: process.env.NODE_ENV,
+
+  fastApiUrl: process.env.FASTAPI_URL,
 });
