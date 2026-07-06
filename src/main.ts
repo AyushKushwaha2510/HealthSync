@@ -12,7 +12,8 @@ async function bootstrap() {
   // for testing with frontend
   app.enableCors({
     origin: [
-      "http://localhost:3000",
+      "http://localhost:3000", // frontend
+      "http://localhost:8000", // ai
       "https://www-healthsync.vercel.app"
     ],
     credentials: true,
