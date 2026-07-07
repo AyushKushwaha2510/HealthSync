@@ -10,12 +10,16 @@ import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
+  private readonly nodeEnv: string;
+
   constructor(
     private readonly userService: UsersService,
     private readonly authService: AuthService,
     private readonly adminService: AdminService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.nodeEnv = this.configService.getOrThrow<string>('nodeENV');
+  }
 
   @Post('register') // default register as patient
   registerUser(@Body() createUserDto: CreateUserDto) {
@@ -28,8 +32,8 @@ export class AuthController {
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: this.configService.getOrThrow<string>('nodeENV') === 'production',
-      sameSite: 'none',
+      secure: this.nodeEnv === 'production',
+      sameSite: this.nodeEnv === 'production' ? 'none' : 'lax', // none , for production
       maxAge: 1 * 24 * 60 * 60 * 1000, // 1-day
     });
 
@@ -44,8 +48,8 @@ export class AuthController {
     // clear cookie
     res.clearCookie('accessToken', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: this.nodeEnv === 'production',
+      sameSite: this.nodeEnv === 'production' ? 'none' : 'lax',
     });
 
     return {
