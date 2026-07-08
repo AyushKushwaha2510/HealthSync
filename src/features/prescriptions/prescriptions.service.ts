@@ -85,33 +85,47 @@ export class PrescriptionService {
       criteria.patientId = patient.data?.id;
     }
 
+    const where = {
+      appointment: {
+        ...(criteria.doctorId && {
+          doctor: { id: criteria.doctorId },
+        }),
+        ...(criteria.patientId && {
+          patient: { id: criteria.patientId },
+        }),
+      },
+    };
+
     const prescriptions = await this.prescriptionRepository.find({
-      where: {
+      where,
+      relations: {
         appointment: {
           doctor: {
-            id: criteria.doctorId,
-          },
-          patient: {
-            id: criteria.patientId,
+            user: true,
           },
         },
       },
-      relations: {
-        appointment: true,
-      },
       select: {
         id: true,
-        notes: true,
         appointment: {
           id: true,
           date: true,
           startTime: true,
+          doctor: {
+            id: true,
+            specialization: true,
+            user: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
         },
       },
     });
 
     if (!prescriptions) throw new NotFoundException('Prescription Not Found');
-
+    console.log('pres', prescriptions);
     return prescriptions;
   }
 
