@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
@@ -12,7 +16,7 @@ export class AiService {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-    private readonly prescriptionService: PrescriptionService
+    private readonly prescriptionService: PrescriptionService,
   ) {
     this.fastApiUrl = this.configService.getOrThrow<string>('fastApiUrl');
   }
@@ -25,12 +29,13 @@ export class AiService {
       throw new NotFoundException('Prescription not found');
     }
 
-    const {id, ...prescription} = prescriptionDetails
-    
+    // removed unwanted elements 
+    const { id, appointment, ...prescription } = prescriptionDetails;
+
     const res = await firstValueFrom(
       this.httpService.post(
         `${this.fastApiUrl}/prescriptions/analyze`,
-        prescription
+        prescription,
       ),
     );
 
