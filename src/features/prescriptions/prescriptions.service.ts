@@ -125,7 +125,7 @@ export class PrescriptionService {
     });
 
     if (!prescriptions) throw new NotFoundException('Prescription Not Found');
-    console.log('pres', prescriptions);
+    
     return prescriptions;
   }
 
