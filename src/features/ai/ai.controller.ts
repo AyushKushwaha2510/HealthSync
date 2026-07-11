@@ -1,17 +1,19 @@
 import { AiService } from './ai.service';
 import { Body, Controller, Post } from '@nestjs/common';
-import { SendRequestToAiDto } from './dto/send-request.dto';
+import { SendAnalysisRequestToAiDto } from './dto/send-analysis-request.dto';
+import { SendMessageDto } from './dto/send-message.dto';
 
-@Controller('analyze')
+@Controller('ai')
 export class AiController {
-  constructor(
-    private readonly aiService: AiService,
-  ) {}
+  constructor(private readonly aiService: AiService) {}
 
-  @Post('prescription')
-  analyzePrescription(
-    @Body() dto: SendRequestToAiDto,
-  ) {
+  @Post('analyze/prescription')
+  analyzePrescription(@Body() dto: SendAnalysisRequestToAiDto) {
     return this.aiService.analyzePrescription(dto);
+  }
+
+  @Post('send-message')
+  sendMessage(@Body() dto: SendMessageDto) {
+    return this.aiService.sendMessage(dto);
   }
 }
