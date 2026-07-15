@@ -331,10 +331,14 @@ export class PrescriptionService {
       .font('regular')
       .text(`${new Date(appointment.date).toDateString()}`);
 
-    doc.moveDown();
+    doc.moveDown(2);
 
     // ---------------- Symptoms ----------------
-    doc.font('bold').fontSize(14).text('Symptoms');
+    rowY = doc.y;
+
+    const symptomX = left;
+
+    doc.font('bold').fontSize(14).text('Symptoms', symptomX, rowY);
 
     doc.font('regular').fontSize(11);
 
@@ -344,10 +348,11 @@ export class PrescriptionService {
       doc.text('N/A');
     }
 
-    doc.moveDown();
+    doc.moveDown(2);
 
     // ---------------- Diagnosis ----------------
-    doc.font('bold').fontSize(14).text('Diagnosis');
+    const diagnosisX = left + 300;
+    doc.font('bold').fontSize(14).text('Diagnosis', diagnosisX, rowY);
 
     doc.font('regular').fontSize(11);
 
@@ -357,48 +362,51 @@ export class PrescriptionService {
       doc.text('N/A');
     }
 
-    doc.moveDown();
+    doc.moveDown(5);
 
     // ---------------- Medicines ----------------
-    doc.font('bold').fontSize(14).text('Medicines');
+    rowY = doc.y + 8;
 
-    doc.moveDown();
+    const medicineX = 80;
+    const dosageX = 240;
+    const frequencyX = 350;
+    const durationX = 500;
 
     doc
       .font('bold')
       .fontSize(11)
-      .text('#', 50)
-      .text('Medicine', 80)
-      .text('Dosage', 220)
-      .text('Frequency', 320)
-      .text('Duration', 430);
+      .text('#', 50, rowY)
+      .text('Medicine', medicineX, rowY)
+      .text('Dosage', dosageX, rowY)
+      .text('Frequency', frequencyX, rowY)
+      .text('Duration', durationX, rowY);
 
-    y = doc.y + 8;
+    rowY += 20;
 
     prescription.medicines.forEach((medicine, index) => {
       doc
         .font('regular')
         .fontSize(11)
-        .text(String(index + 1), 50, y)
-        .text(medicine.name, 80, y)
-        .text(medicine.dosage, 220, y)
-        .text(medicine.frequency, 320, y)
-        .text(medicine.duration, 430, y);
+        .text(String(index + 1), 50, rowY)
+        .text(medicine.name, medicineX, rowY)
+        .text(medicine.dosage, dosageX, rowY)
+        .text(medicine.frequency, frequencyX, rowY, { width: 100 })
+        .text(medicine.duration, durationX, rowY);
 
-      y += 25;
+      rowY += 25;
 
       if (medicine.note) {
         doc
           .fontSize(10)
           .fillColor('gray')
-          .text(`Note: ${medicine.note}`, 80, y);
+          .text(`Note: ${medicine.note}`, 80, rowY - 13);
 
-        y += 20;
+        rowY += 20;
         doc.fillColor('black');
       }
     });
 
-    doc.y = y + 10;
+    doc.y = rowY + 10;
 
     // ---------------- Notes ----------------
     doc.font('bold').fontSize(14).text("Doctor's Notes");
