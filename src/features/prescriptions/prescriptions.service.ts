@@ -125,7 +125,7 @@ export class PrescriptionService {
     });
 
     if (!prescriptions) throw new NotFoundException('Prescription Not Found');
-    
+
     return prescriptions;
   }
 
@@ -198,63 +198,147 @@ export class PrescriptionService {
     doc.registerFont('bold', boldFont);
     doc.registerFont('semibold', semiboldFont);
 
+    const logo = path.join(process.cwd(), 'public/images/logo.jpg');
+
     // ================= PDF Starts =================
-    doc.fontSize(22).font('bold').text('HealthSync', {
-      align: 'center',
+    const left = doc.page.margins.left;
+    const right = doc.page.margins.right;
+
+    let x = 0;
+    let y = 0;
+    x += 5;
+    y += 5;
+
+    doc.image(logo, x, y, {
+      width: 100,
     });
 
-    doc.fontSize(16).text('Medical Prescription', {
-      align: 'center',
-    });
+    y += 15;
+
+    doc
+      .fontSize(22)
+      .font('semibold')
+      .text('HealthSync', x + 95, y, {
+        align: 'left',
+      });
 
     doc.moveDown(2);
 
     // ---------------- Doctor ----------------
-    doc.font('bold').fontSize(14).text('Doctor');
-
     doc
-      .font('regular')
-      .fontSize(11)
+      .font('bold')
+      .fontSize(22)
       .text(
         `Dr. ${appointment.doctor.user.firstName} ${appointment.doctor.user.lastName}`,
+        x,
+        y,
+        {
+          align: 'right',
+        },
       )
-      .text(`Specialization : ${appointment.doctor.specialization}`)
-      .text(`Experience : ${appointment.doctor.experience} Years`)
-      .text(`License No. : ${appointment.doctor.licenseNumber}`);
+      .fontSize(16)
+      .text(`${appointment.doctor.specialization}`, {
+        align: 'right',
+      });
+
+    doc.moveDown(2);
+
+    // ---------------- Title ----------------
+    doc.fontSize(16).text('Medical Prescription', x + 50, doc.y, {
+      align: 'center',
+    });
 
     doc.moveDown();
 
     // ---------------- Patient ----------------
-    doc.font('bold').fontSize(14).text('Patient');
+    // doc.font('bold').fontSize(14).text('Patient');
+
+    x = 25;
+    y = doc.y;
+
+    let rowY = doc.y;
+    const nameX = left + 110;
+    const genderX = 350;
+    const ageX = 470;
+
+    const dob = new Date(appointment.patient.user.dob);
+    const today = new Date();
+
+    let age = today.getFullYear() - dob.getFullYear();
+
+    const monthDiff = today.getMonth() - dob.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
 
     doc
+      .rect(left - 10, rowY - 5, doc.page.width - left - right + 20, 25)
+      .stroke();
+    doc.rect(left - 10, rowY - 5, 100, 25).stroke();
+
+    doc.font('bold').fontSize(14).text('Patient', left, rowY);
+
+    doc
+      .font('semibold')
+      .fontSize(12)
+      .text('Name: ', nameX, rowY, { continued: true })
       .font('regular')
-      .fontSize(11)
       .text(
-        `Name : ${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`,
-      )
-      .text(`Gender : ${appointment.patient.user.gender}`)
-      .text(`DOB : ${appointment.patient.user.dob}`);
+        `${appointment.patient.user.firstName} ${appointment.patient.user.lastName}`,
+      );
+
+    doc
+      .font('semibold')
+      .text('Gender: ', genderX, rowY, { continued: true })
+      .font('regular')
+      .text(`${appointment.patient.user.gender}`);
+
+    doc
+      .font('semibold')
+      .text('Age: ', ageX, rowY, { continued: true })
+      .font('regular')
+      .text(`${age} years`);
 
     doc.moveDown();
 
     // ---------------- Appointment ----------------
-    doc.font('bold').fontSize(14).text('Appointment');
+    rowY = doc.y - 2;
+
+    const hospitalX = left + 110;
+    const dateX = left + 365;
 
     doc
+      .rect(left - 10, rowY - 6, doc.page.width - left - right + 20, 25)
+      .stroke();
+    doc.rect(left - 10, rowY - 6, 100, 25).stroke();
+
+    doc.font('bold').fontSize(14).text('Appointment', left, rowY);
+
+    doc
+      .font('semibold')
+      .fontSize(12)
+      .text('Hospital: ', hospitalX, rowY, { continued: true })
       .font('regular')
-      .fontSize(11)
-      .text(`Date : ${appointment.date}`)
-      .text(`Time : ${appointment.startTime} - ${appointment.endTime}`)
-      .text(`Hospital : ${appointment.hospital?.name}`)
       .text(
-        `Address : ${appointment.hospital?.address.city}, ${appointment.hospital?.address.state}`,
+        `${appointment.hospital?.name ?? '-'}, ${appointment.hospital?.address.city}`,
       );
 
-    doc.moveDown();
+    doc
+      .font('semibold')
+
+      .text('Date: ', dateX, rowY, { continued: true })
+      .font('regular')
+      .text(`${new Date(appointment.date).toDateString()}`);
+
+    doc.moveDown(2);
 
     // ---------------- Symptoms ----------------
-    doc.font('bold').fontSize(14).text('Symptoms');
+    rowY = doc.y;
+
+    const symptomX = left;
+
+    doc.font('bold').fontSize(14).text('Symptoms', symptomX, rowY);
 
     doc.font('regular').fontSize(11);
 
@@ -264,10 +348,11 @@ export class PrescriptionService {
       doc.text('N/A');
     }
 
-    doc.moveDown();
+    doc.moveDown(2);
 
     // ---------------- Diagnosis ----------------
-    doc.font('bold').fontSize(14).text('Diagnosis');
+    const diagnosisX = left + 300;
+    doc.font('bold').fontSize(14).text('Diagnosis', diagnosisX, rowY);
 
     doc.font('regular').fontSize(11);
 
@@ -277,48 +362,51 @@ export class PrescriptionService {
       doc.text('N/A');
     }
 
-    doc.moveDown();
+    doc.moveDown(5);
 
     // ---------------- Medicines ----------------
-    doc.font('bold').fontSize(14).text('Medicines');
+    rowY = doc.y + 8;
 
-    doc.moveDown();
+    const medicineX = 80;
+    const dosageX = 240;
+    const frequencyX = 350;
+    const durationX = 500;
 
     doc
       .font('bold')
       .fontSize(11)
-      .text('#', 50)
-      .text('Medicine', 80)
-      .text('Dosage', 220)
-      .text('Frequency', 320)
-      .text('Duration', 430);
+      .text('#', 50, rowY)
+      .text('Medicine', medicineX, rowY)
+      .text('Dosage', dosageX, rowY)
+      .text('Frequency', frequencyX, rowY)
+      .text('Duration', durationX, rowY);
 
-    let y = doc.y + 8;
+    rowY += 20;
 
     prescription.medicines.forEach((medicine, index) => {
       doc
         .font('regular')
         .fontSize(11)
-        .text(String(index + 1), 50, y)
-        .text(medicine.name, 80, y)
-        .text(medicine.dosage, 220, y)
-        .text(medicine.frequency, 320, y)
-        .text(medicine.duration, 430, y);
+        .text(String(index + 1), 50, rowY)
+        .text(medicine.name, medicineX, rowY)
+        .text(medicine.dosage, dosageX, rowY)
+        .text(medicine.frequency, frequencyX, rowY, { width: 100 })
+        .text(medicine.duration, durationX, rowY);
 
-      y += 25;
+      rowY += 25;
 
       if (medicine.note) {
         doc
           .fontSize(10)
           .fillColor('gray')
-          .text(`Note: ${medicine.note}`, 80, y);
+          .text(`Note: ${medicine.note}`, 80, rowY - 13);
 
-        y += 20;
+        rowY += 20;
         doc.fillColor('black');
       }
     });
 
-    doc.y = y + 10;
+    doc.y = rowY + 10;
 
     // ---------------- Notes ----------------
     doc.font('bold').fontSize(14).text("Doctor's Notes");

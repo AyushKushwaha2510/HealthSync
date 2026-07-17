@@ -14,4 +14,6 @@ export default () => ({
   nodeENV: process.env.NODE_ENV,
 
   fastApiUrl: process.env.FASTAPI_URL,
+
+  resendApiKey: process.env.RESEND_API_KEY,
 });
