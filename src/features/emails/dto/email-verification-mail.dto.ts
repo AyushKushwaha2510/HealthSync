@@ -3,9 +3,13 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 export class EmailVerificationMailDto {
   @IsEmail()
   @IsNotEmpty()
-  email!: string;
+  readonly email!: string;
 
   @IsString()
   @IsNotEmpty()
-  firstName!: string;
+  readonly firstName!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly lastName!: string;
 }
