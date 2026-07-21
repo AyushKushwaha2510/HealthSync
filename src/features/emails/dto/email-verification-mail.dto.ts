@@ -8,4 +8,8 @@ export class EmailVerificationMailDto {
   @IsString()
   @IsNotEmpty()
   firstName!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  lastName!: string;
 }
