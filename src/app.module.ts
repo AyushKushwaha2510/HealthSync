@@ -20,6 +20,7 @@ import { DoctorsAvailabilityModule } from './features/doctors-availability/docto
 import { PaymentsModule } from './features/payments/payments.module';
 import { PrescriptionModule } from './features/prescriptions/prescriptions.module';
 import { AiModule } from './features/ai/ai.module';
+import { EmailsModule } from './features/emails/emails.module';
 
 @Module({
   imports: [
@@ -43,7 +44,8 @@ import { AiModule } from './features/ai/ai.module';
     DoctorsAvailabilityModule,
     PaymentsModule,
     PrescriptionModule,
-    AiModule
+    AiModule,
+    EmailsModule
   ],
   controllers: [AppController],
   providers: [AppService],
