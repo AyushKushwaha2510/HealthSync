@@ -2,15 +2,17 @@ import { ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
 import { EmailVerificationMailDto } from './dto/email-verification-mail.dto';
 import {
+  BadRequestException,
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Otp } from './entities/opt.entity';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { VerifyMailOtpDto } from './dto/verify-mail-otp.dto';
 
 @Injectable()
@@ -30,17 +32,19 @@ export class EmailService {
 
   // ===== SEND OTP for EMAIL verification =====
   async sendEmailVerificationMail(dto: EmailVerificationMailDto) {
-    const otp = Math.ceil(Math.random() * 100000);
+    const generatedOtp = Math.ceil(Math.random() * 100000);
 
     // encode the OTP
-    const hashedOtp = Number(await bcrypt.genSalt(otp));
+    const hashedOtp = Number(await bcrypt.genSalt(generatedOtp));
 
-    const newOtp = new Otp();
-    newOtp.email = dto.email;
-    newOtp.otp = hashedOtp;
+    const otp = await this.otpRepository.create({
+      email: dto.email,
+      otp: hashedOtp,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+    });
 
     // store the otp in DB
-    await this.otpRepository.save(newOtp);
+    await this.otpRepository.save(otp);
 
     console.log(otp);
     const html = `
@@ -67,8 +71,13 @@ export class EmailService {
       },
     });
 
-    if (!savedOtpDetails)
-      throw new InternalServerErrorException('Otp Not Sent');
+    if (!savedOtpDetails) throw new NotFoundException('OTP not found');
+
+    if (savedOtpDetails.expiresAt < new Date())
+      throw new BadRequestException('OTP has expired');
+
+    if (savedOtpDetails.otp !== dto.otp)
+      throw new BadRequestException('Invalid OTP');
 
     const savedOtp = savedOtpDetails.otp;
     const userOtp = dto.otp;
@@ -80,6 +89,11 @@ export class EmailService {
     // remove saved otp for this email
     await this.otpRepository.delete({
       email: dto.email,
+    });
+
+    // delete all expired OTP
+    await this.otpRepository.delete({
+      expiresAt: LessThan(new Date()),
     });
 
     return {
