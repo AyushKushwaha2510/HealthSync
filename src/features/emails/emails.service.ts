@@ -1,11 +1,17 @@
 import { ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
 import { EmailVerificationMailDto } from './dto/email-verification-mail.dto';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Otp } from './entities/opt.entity';
 import { Repository } from 'typeorm';
+import { VerifyMailOtpDto } from './dto/verify-mail-otp.dto';
 
 @Injectable()
 export class EmailService {
@@ -22,11 +28,12 @@ export class EmailService {
     this.resend = new Resend(this.resendApiKey);
   }
 
+  // ===== SEND OTP for EMAIL verification =====
   async sendEmailVerificationMail(dto: EmailVerificationMailDto) {
     const otp = Math.ceil(Math.random() * 100000);
 
     // encode the OTP
-    const hashedOtp = Number(bcrypt.genSalt(otp));
+    const hashedOtp = Number(await bcrypt.genSalt(otp));
 
     const newOtp = new Otp();
     newOtp.email = dto.email;
@@ -50,5 +57,35 @@ export class EmailService {
     });
 
     if (error) throw new InternalServerErrorException('Unable to Send Email');
+  }
+
+  // ===== VERIFY OTP =====
+  async verifyMailOtp(dto: VerifyMailOtpDto) {
+    const savedOtpDetails = await this.otpRepository.findOne({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    if (!savedOtpDetails)
+      throw new InternalServerErrorException('Otp Not Sent');
+
+    const savedOtp = savedOtpDetails.otp;
+    const userOtp = dto.otp;
+    const hashedOtp = Number(await bcrypt.genSalt(userOtp));
+
+    if (savedOtp !== hashedOtp)
+      throw new UnauthorizedException('Incorrect OTP');
+
+    // remove saved otp for this email
+    await this.otpRepository.delete({
+      email: dto.email,
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      success: true,
+      message: 'OTP verified',
+    };
   }
 }
