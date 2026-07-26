@@ -9,7 +9,7 @@ export class Otp {
   email!: string;
 
   @Column()
-  otp!: number;
+  otp!: string;
 
   @CreateDateColumn()
   createdAt!: Date;
