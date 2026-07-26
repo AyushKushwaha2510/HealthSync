@@ -7,13 +7,13 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Otp } from './entities/opt.entity';
 import { LessThan, Repository } from 'typeorm';
 import { VerifyMailOtpDto } from './dto/verify-mail-otp.dto';
+import { EmailTemplate } from './emails.templete';
 
 @Injectable()
 export class EmailService {
@@ -22,6 +22,7 @@ export class EmailService {
 
   constructor(
     private readonly configService: ConfigService,
+    private readonly emailTemplete: EmailTemplate,
 
     @InjectRepository(Otp)
     private readonly otpRepository: Repository<Otp>,
@@ -32,12 +33,15 @@ export class EmailService {
 
   // ===== SEND OTP for EMAIL verification =====
   async sendEmailVerificationMail(dto: EmailVerificationMailDto) {
-    const generatedOtp = Math.ceil(Math.random() * 100000);
+    // delete old OTPs for this email
+    await this.otpRepository.delete({ email: dto.email });
+
+    const generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
 
     // encode the OTP
-    const hashedOtp = Number(await bcrypt.genSalt(generatedOtp));
+    const hashedOtp = await bcrypt.hash(generatedOtp, 10);
 
-    const otp = await this.otpRepository.create({
+    const otp = this.otpRepository.create({
       email: dto.email,
       otp: hashedOtp,
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
@@ -46,18 +50,11 @@ export class EmailService {
     // store the otp in DB
     await this.otpRepository.save(otp);
 
-    console.log(otp);
-    const html = `
-      this mail is for verification of your email id 
-      plese enter your otp
-      ${otp}
-    `;
-    console.log('req, aa hua', dto);
     const { data, error } = await this.resend.emails.send({
       from: 'Acme <onboarding@resend.dev>',
       to: ['ayush.kushwaha23138@gmail.com'],
       subject: 'OTP confirmations',
-      html: '<strong>It works!</strong>',
+      html: this.emailTemplete.otpMail(generatedOtp),
     });
 
     if (error) throw new InternalServerErrorException('Unable to Send Email');
@@ -76,15 +73,15 @@ export class EmailService {
     if (savedOtpDetails.expiresAt < new Date())
       throw new BadRequestException('OTP has expired');
 
-    if (savedOtpDetails.otp !== dto.otp)
-      throw new BadRequestException('Invalid OTP');
-
     const savedOtp = savedOtpDetails.otp;
     const userOtp = dto.otp;
-    const hashedOtp = Number(await bcrypt.genSalt(userOtp));
 
-    if (savedOtp !== hashedOtp)
-      throw new UnauthorizedException('Incorrect OTP');
+    // Check validity
+    const isMatch = await bcrypt.compare(String(userOtp), savedOtp);
+
+    if (!isMatch) {
+      throw new BadRequestException('Invalid OTP');
+    }
 
     // remove saved otp for this email
     await this.otpRepository.delete({
