@@ -15,6 +15,7 @@ import { DoctorsAvailability } from 'src/features/doctors-availability/entities/
 import { Payment } from 'src/features/payments/entities/payment.entity';
 import { Prescription } from 'src/features/prescriptions/entities/prescriptions.entity';
 import { AiService } from 'src/features/ai/ai.service';
+import { Otp } from 'src/features/emails/entities/opt.entity';
 
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -43,7 +44,8 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
         DoctorsAvailability,
         Payment,
         Prescription,
-        AiService
+        AiService,
+        Otp
       ],
       ssl: {
         rejectUnauthorized: false,

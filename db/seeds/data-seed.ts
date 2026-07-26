@@ -138,6 +138,7 @@ export const seedData = async (manager: EntityManager): Promise<void> => {
 
     doctor.user = user;
 
+    doctor.appointmentFee = Math.ceil(Math.random() * 1000);
     doctor.specialization = faker.helpers.arrayElement(SPECIALIZATIONS);
 
     doctor.experience = faker.number.int({

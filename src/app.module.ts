@@ -21,6 +21,7 @@ import { PaymentsModule } from './features/payments/payments.module';
 import { PrescriptionModule } from './features/prescriptions/prescriptions.module';
 import { AiModule } from './features/ai/ai.module';
 import { EmailsModule } from './features/emails/emails.module';
+import { CleanupModule } from './features/cleanup/cleanup.module';
 
 @Module({
   imports: [
@@ -45,7 +46,8 @@ import { EmailsModule } from './features/emails/emails.module';
     PaymentsModule,
     PrescriptionModule,
     AiModule,
-    EmailsModule
+    EmailsModule,
+    CleanupModule
   ],
   controllers: [AppController],
   providers: [AppService],
