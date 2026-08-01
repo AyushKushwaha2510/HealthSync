@@ -98,8 +98,12 @@ export class AppointmentsService {
           },
         },
         relations: {
-          patient: true,
-          doctor: true,
+          patient: {
+            user: true,
+          },
+          doctor: {
+            user: true,
+          },
           hospital: true,
           clinic: true,
         },
