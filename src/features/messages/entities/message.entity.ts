@@ -1,9 +1,9 @@
 import { Role } from 'src/features/messages/types/messages.type';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('messages')
 export class Message {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid')
   id!: string;
 
   @Column({ name: 'conversation_id' })
