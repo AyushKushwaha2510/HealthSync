@@ -43,6 +43,15 @@ export class AiService {
       ),
     );
 
+    // save the analysis response to ask questions related to this 
+    await this.chatMessageService.create({
+      id: crypto.randomUUID(),
+      conversationId: data.conversationId,
+      content: res.data,
+      role: Role.ASSISTANT,
+      createdAt: new Date(Date.now()),
+    });
+
     if (!res)
       throw new InternalServerErrorException('Failed to analyze prescription');
 
@@ -57,8 +66,6 @@ export class AiService {
         'Please Write a Message to Continue',
       );
 
-    console.log('human ', data);
-
     // Save user message in DB
     await this.chatMessageService.create({
       id,
@@ -69,7 +76,7 @@ export class AiService {
     });
 
     const messages = await this.chatMessageService.findAll({ conversationId });
-    console.log('msg historuy', messages);
+
     if (messages.length === 0)
       throw new InternalServerErrorException(
         'Server failed to get the conversation context',
@@ -86,8 +93,6 @@ export class AiService {
         { messages: history }, // fastapi expects an object as i have used Pydantic Validation in this Route
       ),
     );
-
-    console.log('ai ', res.data);
 
     // Save AI response message in DB
     await this.chatMessageService.create({
