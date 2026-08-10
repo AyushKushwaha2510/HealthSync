@@ -4,6 +4,7 @@ import { UpdateMessageDto } from './dto/update-message.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
 import { Repository } from 'typeorm';
+import { FindMessageDto } from './dto/find-message-dto';
 
 @Injectable()
 export class MessagesService {
@@ -19,8 +20,8 @@ export class MessagesService {
     return await this.messageRepository.save(newMessage);
   }
 
-  findAll() {
-    return `This action returns all messages`;
+  findAll(findMessageDto: FindMessageDto) {
+    return this.messageRepository.findBy(findMessageDto);
   }
 
   findOne(id: number) {

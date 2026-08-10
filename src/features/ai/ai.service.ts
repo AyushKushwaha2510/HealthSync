@@ -68,10 +68,22 @@ export class AiService {
       createdAt: new Date(Date.now()),
     });
 
+    const messages = await this.chatMessageService.findAll({ conversationId });
+    console.log('msg historuy', messages);
+    if (messages.length === 0)
+      throw new InternalServerErrorException(
+        'Server failed to get the conversation context',
+      );
+
+    const history = messages.map((msg) => ({
+      role: msg.role.toLowerCase(),
+      content: msg.content,
+    }));
+
     const res = await firstValueFrom(
       this.httpService.post(
         `${this.fastApiUrl}/chat/send`,
-        { message }, // fastapi expects an object as i have used Pydantic Validation in this Route
+        { messages: history }, // fastapi expects an object as i have used Pydantic Validation in this Route
       ),
     );
 
