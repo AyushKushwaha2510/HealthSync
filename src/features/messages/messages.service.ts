@@ -14,9 +14,7 @@ export class MessagesService {
   ) {}
 
   async create(createMessageDto: CreateMessageDto) {
-    console.log("data", createMessageDto)
     const newMessage = this.messageRepository.create(createMessageDto);
-
     return await this.messageRepository.save(newMessage);
   }
 
