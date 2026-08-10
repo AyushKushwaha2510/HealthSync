@@ -43,7 +43,7 @@ export class AiService {
       ),
     );
 
-    // save the analysis response to ask questions related to this 
+    // save the analysis response to ask questions related to this
     await this.chatMessageService.create({
       id: crypto.randomUUID(),
       conversationId: data.conversationId,
@@ -83,8 +83,11 @@ export class AiService {
       );
 
     const history = messages.map((msg) => ({
-      role: msg.role.toLowerCase(),
-      content: msg.content,
+      role: msg.role,
+      content:
+        typeof msg.content === 'string'
+          ? msg.content
+          : JSON.stringify(msg.content),
     }));
 
     const res = await firstValueFrom(
