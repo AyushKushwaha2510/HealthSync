@@ -1,3 +1,4 @@
+import type { ContentType } from 'src/features/messages/types/messages.type';
 import { Role } from 'src/features/messages/types/messages.type';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
@@ -15,8 +16,10 @@ export class Message {
   })
   role!: string;
 
-  @Column()
-  content!: string;
+  @Column({
+    type:'jsonb'
+  })
+  content!: ContentType;
 
   @Column({
     name: 'created_at',
