@@ -1,5 +1,6 @@
 import { IsDate, IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { Role } from '../types/messages.type';
+import type { ContentType } from '../types/messages.type';
 
 export class CreateMessageDto {
   @IsString()
@@ -12,7 +13,7 @@ export class CreateMessageDto {
 
   @IsString()
   @IsNotEmpty()
-  readonly content!: string;
+  readonly content!: ContentType;
 
   @IsEnum(Role)
   @IsString()
