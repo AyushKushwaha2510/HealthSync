@@ -45,10 +45,10 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
         Otp,
         Message
       ],
-      // ssl: {
-      //   rejectUnauthorized: false,
-      // },
-      synchronize: true,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+      synchronize: false,
       // synchronize: true, // keep it false in production
       migrations: ['dist/db/migrations/*.js'],
     };
