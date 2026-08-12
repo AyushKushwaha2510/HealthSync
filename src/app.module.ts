@@ -22,6 +22,8 @@ import { PrescriptionModule } from './features/prescriptions/prescriptions.modul
 import { AiModule } from './features/ai/ai.module';
 import { EmailsModule } from './features/emails/emails.module';
 import { CleanupModule } from './features/cleanup/cleanup.module';
+import { ConversationsModule } from './features/conversations/conversations.module';
+import { MessagesModule } from './features/messages/messages.module';
 
 @Module({
   imports: [
@@ -47,7 +49,9 @@ import { CleanupModule } from './features/cleanup/cleanup.module';
     PrescriptionModule,
     AiModule,
     EmailsModule,
-    CleanupModule
+    CleanupModule,
+    ConversationsModule,
+    MessagesModule
   ],
   controllers: [AppController],
   providers: [AppService],
