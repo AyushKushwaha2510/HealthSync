@@ -16,7 +16,6 @@ import { Payment } from 'src/features/payments/entities/payment.entity';
 import { Prescription } from 'src/features/prescriptions/entities/prescriptions.entity';
 import { AiService } from 'src/features/ai/ai.service';
 import { Otp } from 'src/features/emails/entities/opt.entity';
-import { Conversation } from 'src/features/conversations/entities/conversation.entity';
 import { Message } from 'src/features/messages/entities/message.entity';
 
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
@@ -48,7 +47,6 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
         Prescription,
         AiService,
         Otp,
-        Conversation,
         Message
       ],
       // ssl: {
