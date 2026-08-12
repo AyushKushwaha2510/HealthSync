@@ -27,11 +27,7 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   ): Promise<TypeOrmModuleOptions> => {
     return {
       type: 'postgres',
-      host: configService.get<string>('dbHost'),
-      port: configService.get<number>('dbPort'),
-      username: configService.get<string>('dbUsername'),
-      database: configService.get<string>('dbName'),
-      password: configService.get<string>('dbPassword'),
+      url: configService.get<string>('dbUrl'),
       // entities: ["dist/**/*.entity.js"],
       entities: [
         User,

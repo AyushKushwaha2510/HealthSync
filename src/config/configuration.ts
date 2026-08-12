@@ -16,4 +16,6 @@ export default () => ({
   fastApiUrl: process.env.FASTAPI_URL,
 
   resendApiKey: process.env.RESEND_API_KEY,
+
+  dbUrl: process.env.DATABASE_URL
 });
