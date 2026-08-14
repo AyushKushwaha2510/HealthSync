@@ -24,6 +24,12 @@ export class Clinic {
   @Column({ nullable: true })
   phone?: string;
 
+  @Column()
+  latitute!: number;
+
+  @Column()
+  longitude!: number;
+
   @ManyToMany(() => Doctor, (doctor) => doctor.clinics)
   doctors!: Doctor[];
 
